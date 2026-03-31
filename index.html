@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#050d1f">
+<title>SWOT × TaxChain — Crypto Strategy & Tax Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════ TOKENS ═══════════════════════ */
+:root {
+  --navy:#050d1f; --navy2:#0d0a2e; --navy3:#1e0a4a;
+  --gold:#d4af37; --gold-l:#ffe566; --gold-dim:rgba(212,175,55,.15);
+  --teal:#00c8ac; --teal-d:#007a6a; --teal-l:#5eefd8;
+  --emerald:#00FFAA; --emerald-dim:rgba(0,255,170,0.12); --emerald-mid:rgba(0,255,170,0.3);
+  --amber:#f97316; --amber-d:#c05a08;
+  --violet:#6b21a8; --violet-l:#a855f7;
+  --em:#1cbc58; --em-d:#0f7a39;
+  --tl-bg:#DCF5F2;--tl-bd:#60B8B0;--tl-t:#0D6660;--tl-dp:#008A82;
+  --am-bg:#FBF0E2;--am-bd:#C89060;--am-t:#7A4010;--am-dp:#C06820;
+  --vl-bg:#EFE8FA;--vl-bd:#9870CC;--vl-t:#4A1880;--vl-dp:#6030A0;
+  --em-bg:#DDF2E6;--em-bd:#60AA78;--em-t:#0A5C30;--em-dp:#18884A;
+  --gd-bg:#FBF6E2;--gd-bd:#C8A030;--gd-t:#7A5A00;
+  --fill-xs:#F2F4FA;--fill-sm:#E8EBF5;--fill-md:#D8DCF0;--fill-lg:#C4C9E4;
+  --label:#1A1E30;--label-mid:#4A5070;--label-muted:#8890AA;
+  --line:#B8BECE;--line-dark:#3A4060;
+  --di-top:calc(env(safe-area-inset-top,14px) + 10px);
+  --safe-b:env(safe-area-inset-bottom,34px);
+  --nav-h:82px;
+  --transition:0.4s cubic-bezier(0.4,0,0.2,1);
+  --font-display:'Syne',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+  --font-body:'IBM Plex Sans',sans-serif;
+  --font-dm:'DM Sans',sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{font-family:var(--font-body);background:var(--navy);max-width:430px;margin:0 auto;overflow:hidden;}
+button,input,textarea{font-family:inherit;}
+
+/* ═══════════════════════ APP BRIDGE SWITCHER ═══════════════════════ */
+/* Top-level mode: 'swot' or 'taxchain' */
+.app-mode{display:none;}
+.app-mode.active{display:flex;flex-direction:column;height:100vh;height:-webkit-fill-available;overflow:hidden;}
+
+/* ═══════════════════════ BRIDGE TRANSITION ═══════════════════════ */
+#bridge-overlay{
+  position:fixed;inset:0;z-index:5000;
+  background:linear-gradient(135deg,#050d1f,#00c8ac10,#00FFAA15,#050d1f);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;
+  opacity:0;pointer-events:none;
+  transition:opacity .4s ease;
+  max-width:430px;margin:0 auto;
+}
+#bridge-overlay.show{opacity:1;pointer-events:all;}
+.bridge-logo{
+  font-family:var(--font-display);font-size:28px;font-weight:800;
+  background:linear-gradient(135deg,var(--teal),var(--emerald),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:-.02em;
+}
+.bridge-sub{font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;}
+.bridge-spin{
+  width:44px;height:44px;border-radius:50%;
+  border:2px solid rgba(0,255,170,.15);
+  border-top-color:var(--emerald);
+  animation:bspin .9s linear infinite;
+}
+@keyframes bspin{to{transform:rotate(360deg)}}
+
+/* ═══════════════════════ GLOBAL MODE TOGGLE BAR ═══════════════════════ */
+#mode-toggle-bar{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top,10px) + 4px) 14px 6px;
+  background:rgba(5,13,31,.92);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  gap:10px;
+}
+.mtb-brand{
+  display:flex;align-items:center;gap:7px;
+  font-family:var(--font-display);font-size:13px;font-weight:800;
+  color:#fff;letter-spacing:-.02em;white-space:nowrap;
+}
+.mtb-brand-icon{
+  width:26px;height:26px;border-radius:7px;
+  background:linear-gradient(135deg,var(--teal),var(--emerald));
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;
+}
+.mtb-seg{
+  display:flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;padding:2px;gap:2px;flex-shrink:0;
+}
+.mtb-pill{
+  padding:5px 12px;border-radius:18px;font-size:10px;font-weight:700;
+  font-family:var(--font-mono);letter-spacing:.04em;
+  cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,.4);
+  transition:all .25s;white-space:nowrap;
+}
+.mtb-pill.active{
+  background:linear-gradient(135deg,var(--teal),var(--teal-d));
+  color:#fff;box-shadow:0 2px 10px rgba(0,200,172,.35);
+}
+.mtb-pill.taxchain.active{
+  background:linear-gradient(135deg,var(--emerald),#00C882);
+  color:#050d1f;box-shadow:0 2px 10px rgba(0,255,170,.35);
+}
+.mtb-score{
+  font-family:var(--font-mono);font-size:10px;font-weight:700;
+  color:var(--gold-l);background:rgba(212,175,55,.12);
+  border:1px solid rgba(212,175,55,.2);border-radius:20px;
+  padding:4px 9px;white-space:nowrap;flex-shrink:0;cursor:pointer;
+}
+.mode-topbar-spacer{height:calc(env(safe-area-inset-top,10px) + 44px);flex-shrink:0;}
+
+/* ═══════════════════════════════════════════════
+   SWOT APP STYLES
+═══════════════════════════════════════════════ */
+
+/* Screens */
+.swot-screen{display:none;flex-direction:column;height:100%;overflow:hidden;background:linear-gradient(175deg,#050d1f 0%,#0d0a2e 30%,#1e0a4a 55%,#2a0f5e 100%);}
+.swot-screen.active{display:flex;}
+.page-scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:var(--nav-h);}
+.page-scroll::-webkit-scrollbar{display:none;}
+
+/* Bottom Nav SWOT */
+.swot-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;height:var(--nav-h);
+  background:rgba(5,13,31,.96);backdrop-filter:blur(30px) saturate(200%);-webkit-backdrop-filter:blur(30px) saturate(200%);
+  border-top:.5px solid rgba(255,255,255,.12);
+  display:flex;align-items:flex-start;padding-top:10px;padding-bottom:var(--safe-b);z-index:500;
+}
+.s-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0;cursor:pointer;position:relative;min-height:48px;transition:transform .15s;border:none;background:transparent;}
+.s-nav-item:active{transform:scale(.88);}
+.s-nav-item svg{stroke:rgba(136,144,170,1);transition:stroke .2s;}
+.s-nav-item.active svg{stroke:#fff;}
+.s-nav-label{font-size:9px;font-weight:600;color:rgba(136,144,170,1);letter-spacing:.4px;text-transform:uppercase;font-family:var(--font-mono);transition:color .2s;}
+.s-nav-item.active .s-nav-label{color:#fff;}
+.s-nav-item::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%) scaleX(0);width:32px;height:3px;border-radius:3px;transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+.s-nav-item.active::before{transform:translateX(-50%) scaleX(1);}
+.s-nav-item:nth-child(1)::before{background:var(--teal);box-shadow:0 0 8px rgba(0,200,172,.5);}
+.s-nav-item:nth-child(2)::before{background:var(--amber);box-shadow:0 0 8px rgba(249,115,22,.5);}
+.s-nav-item:nth-child(3)::before{background:var(--violet-l);box-shadow:0 0 8px rgba(168,85,247,.5);}
+.s-nav-item:nth-child(4)::before{background:var(--gold);box-shadow:0 0 8px rgba(212,175,55,.5);}
+.s-nav-item:nth-child(5)::before{background:var(--em);box-shadow:0 0 8px rgba(28,188,88,.5);}
+.s-nav-item:nth-child(6)::before{background:var(--teal);box-shadow:0 0 8px rgba(0,200,172,.5);}
+
+/* SWOT Section labels */
+.sec-lt{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--label-muted);padding:11px 18px 6px;display:flex;justify-content:space-between;align-items:center;}
+.sec-lt a{font-size:9px;color:var(--tl-dp);text-decoration:underline;cursor:pointer;}
+.sec-dk{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);padding:13px 18px 6px;display:flex;justify-content:space-between;align-items:center;}
+
+/* ── S1: HOME ── */
+.hm-hero{position:relative;overflow:hidden;background:linear-gradient(145deg,#0a1030,#16083a 50%,#220f52);flex-shrink:0;}
+.hm-orb{position:absolute;border-radius:50%;filter:blur(65px);pointer-events:none;}
+.hmo1{width:220px;height:220px;top:-70px;right:-50px;background:rgba(0,200,172,.18);animation:da 12s ease-in-out infinite;}
+.hmo2{width:200px;height:200px;bottom:-50px;left:-50px;background:rgba(107,33,168,.22);animation:db 15s ease-in-out infinite;}
+.hm-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:38px 38px;}
+.hm-inner{position:relative;z-index:3;padding:12px 18px 18px;}
+.hm-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.hm-greet{font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,.35);margin-bottom:2px;letter-spacing:.06em;}
+.hm-name{font-family:'Bebas Neue',sans-serif;font-size:32px;color:#fff;letter-spacing:.08em;line-height:1;}
+.hm-lv{background:linear-gradient(120deg,var(--gold),var(--amber));color:#050d1f;font-family:var(--font-mono);font-size:10px;font-weight:700;padding:4px 12px;border-radius:100px;margin-top:2px;display:inline-block;}
+.hm-bell{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;}
+.hm-stats{display:flex;gap:7px;}
+.hst{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:9px 6px 8px;text-align:center;cursor:pointer;}
+.hst-v{font-family:var(--font-mono);font-size:15px;font-weight:700;color:#fff;line-height:1;}
+.hst-v.t{color:var(--teal)}.hst-v.g{color:var(--gold-l)}.hst-v.a{color:var(--amber)}.hst-v.v{color:var(--violet-l)}.hst-v.e{color:var(--em)}
+.hst-l{font-family:var(--font-mono);font-size:7px;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:.07em;margin-top:2px;}
+.xpbar{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;margin:10px 18px 0;}
+.xpbar-r{display:flex;justify-content:space-between;margin-bottom:5px;}
+.xpbar-l{font-family:var(--font-mono);font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;}
+.xpbar-v{font-family:var(--font-mono);font-size:9px;color:var(--gold-l);font-weight:600;}
+.xp-tr{height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.xp-f{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--gold));width:62%;transition:width .6s cubic-bezier(.34,1.2,.64,1);}
+
+/* SWOT Summary card */
+.qs-card{margin:10px 14px 0;background:#fff;border-radius:16px;border:1.5px solid var(--fill-md);box-shadow:0 3px 14px rgba(5,13,31,.1);overflow:hidden;}
+.qs-hdr{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--fill-sm);background:linear-gradient(90deg,var(--fill-xs),#EFF1FA);}
+.qs-ttl{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--label);}
+.qs-tog{font-family:var(--font-mono);font-size:9px;color:#3060C8;cursor:pointer;border:1px solid var(--line);border-radius:5px;padding:3px 8px;background:#fff;}
+.qs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 14px;}
+.qs-q{border-radius:10px;padding:9px 11px;border:1.5px solid;}
+.qs-s{background:var(--tl-bg);border-color:var(--tl-bd)}.qs-w{background:var(--am-bg);border-color:var(--am-bd)}.qs-o{background:var(--vl-bg);border-color:var(--vl-bd)}.qs-t{background:var(--em-bg);border-color:var(--em-bd)}
+.qs-qh{font-family:var(--font-mono);font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+.qs-s .qs-qh{color:var(--tl-t)}.qs-w .qs-qh{color:var(--am-t)}.qs-o .qs-qh{color:var(--vl-t)}.qs-t .qs-qh{color:var(--em-t)}
+.qs-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.qsd-s{background:var(--tl-dp)}.qsd-w{background:var(--am-dp)}.qsd-o{background:var(--vl-dp)}.qsd-t{background:var(--em-dp)}
+.qs-item{font-family:var(--font-body);font-size:10px;color:var(--label-mid);padding:1px 0;display:flex;gap:4px;align-items:flex-start;line-height:1.35;}
+.qs-item::before{content:'·';color:var(--fill-lg);flex-shrink:0;}
+.qs-foot{padding:9px 14px 12px;border-top:1px solid var(--fill-sm);display:flex;gap:8px;}
+.qs-btn{flex:1;height:40px;border-radius:10px;font-family:var(--font-mono);font-size:10.5px;font-weight:700;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;}
+.qs-edit{background:var(--fill-sm);color:var(--label-mid);}
+.qs-new{background:linear-gradient(120deg,var(--teal),var(--teal-d));color:#fff;box-shadow:0 3px 12px rgba(0,200,172,.28);}
+
+/* Quick action tiles */
+.qa-grid{display:flex;gap:8px;margin:0 14px;}
+.qa-tile{flex:1;border-radius:13px;padding:12px 10px;cursor:pointer;text-align:center;transition:transform .15s;}
+.qa-tile:active{transform:scale(.96);}
+.qa-icon{font-size:20px;margin-bottom:4px;}
+.qa-lbl{font-family:var(--font-mono);font-size:9px;font-weight:700;}
+
+/* Quick actions - TaxChain CTA */
+.taxchain-cta{
+  margin:10px 14px 0;
+  background:linear-gradient(135deg,rgba(0,255,170,.08),rgba(0,200,172,.05));
+  border:1px solid rgba(0,255,170,.2);border-radius:16px;padding:14px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;
+}
+.taxchain-cta:active{transform:scale(.98);}
+.taxchain-cta:hover{border-color:rgba(0,255,170,.4);box-shadow:0 4px 20px rgba(0,255,170,.1);}
+.tc-cta-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--emerald),#00C882);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 4px 14px rgba(0,255,170,.3);}
+.tc-cta-info{flex:1;}
+.tc-cta-t{font-family:var(--font-display);font-size:13px;font-weight:800;color:var(--emerald);letter-spacing:-.01em;margin-bottom:2px;}
+.tc-cta-s{font-family:var(--font-body);font-size:10px;color:rgba(255,255,255,.45);line-height:1.4;}
+.tc-cta-arr{font-size:18px;color:var(--emerald);opacity:.6;}
+
+/* Motivation quote */
+.hm-quote{margin:10px 14px 0;background:linear-gradient(135deg,#0d0a2e,#1e0a4a);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:16px;position:relative;overflow:hidden;}
+.hq-m{font-family:'Syne',serif;font-size:44px;color:var(--teal);opacity:.18;line-height:.7;display:block;margin-bottom:4px;}
+.hq-t{font-family:'Syne',sans-serif;font-size:14px;color:rgba(255,255,255,.88);line-height:1.55;font-style:italic;}
+.hq-t .hl{color:var(--teal);font-style:normal;font-weight:700;}
+.hq-a{font-family:var(--font-mono);font-size:8px;color:rgba(255,255,255,.26);margin-top:8px;text-transform:uppercase;letter-spacing:.1em;}
+
+/* Activity feed */
+.ri-wrap{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;margin:10px 14px 0;overflow:hidden;}
+.ri{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;transition:background .15s;}
+.ri:active{background:rgba(255,255,255,.05);}
+.ri+.ri{border-top:1px solid rgba(255,255,255,.06);}
+.ri-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ri-info{flex:1;}
+.ri-t{font-family:var(--font-mono);font-size:11px;font-weight:600;color:#fff;}
+.ri-s{font-family:var(--font-body);font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;}
+.ri-v{font-family:var(--font-mono);font-size:12px;font-weight:700;}
+
+/* ── S2: SWOT ENTRY ── */
+.entry-hdr{background:linear-gradient(135deg,#fff,#F2F5FF 60%,#EBF8F6);border-bottom:1px solid var(--fill-md);padding:13px 18px 11px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.entry-title{font-family:var(--font-mono);font-size:17px;font-weight:700;color:var(--label);}
+.entry-sub{font-family:var(--font-mono);font-size:9px;color:var(--label-muted);margin-top:2px;}
+.save-btn{background:linear-gradient(120deg,var(--teal),var(--teal-d));color:#fff;border:none;border-radius:11px;padding:9px 18px;font-family:var(--font-mono);font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(0,200,172,.3);transition:all .15s;}
+.save-btn:active{transform:scale(.95);}
+.eq-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin:14px 14px 0;background:var(--fill-md);border-radius:14px;overflow:hidden;}
+.eq-q{padding:11px 11px 9px;display:flex;flex-direction:column;gap:5px;}
+.eq-q.s{background:var(--tl-bg)}.eq-q.w{background:var(--am-bg)}.eq-q.o{background:var(--vl-bg)}.eq-q.t{background:var(--em-bg)}
+.eq-h{display:flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding-bottom:6px;margin-bottom:2px;border-bottom:1.5px solid;}
+.eq-q.s .eq-h{color:var(--tl-t);border-color:var(--tl-bd)}.eq-q.w .eq-h{color:var(--am-t);border-color:var(--am-bd)}.eq-q.o .eq-h{color:var(--vl-t);border-color:var(--vl-bd)}.eq-q.t .eq-h{color:var(--em-t);border-color:var(--em-bd)}
+.eq-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.eq-q.s .eq-dot{background:var(--tl-dp)}.eq-q.w .eq-dot{background:var(--am-dp)}.eq-q.o .eq-dot{background:var(--vl-dp)}.eq-q.t .eq-dot{background:var(--em-dp)}
+.eq-item{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.6);border-radius:7px;padding:6px 7px;}
+.eq-txt{font-family:var(--font-body);font-size:10px;color:var(--label);flex:1;line-height:1.3;}
+.eq-del{font-size:12px;cursor:pointer;opacity:.32;flex-shrink:0;padding:2px 3px;}
+.eq-add{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.4);border:1px dashed;border-radius:7px;padding:7px 8px;cursor:pointer;transition:background .2s;margin-top:auto;min-height:38px;}
+.eq-q.s .eq-add{border-color:var(--tl-bd)}.eq-q.w .eq-add{border-color:var(--am-bd)}.eq-q.o .eq-add{border-color:var(--vl-bd)}.eq-q.t .eq-add{border-color:var(--em-bd)}
+.eq-add-l{font-family:var(--font-mono);font-size:8px;color:var(--label-muted);}
+
+/* AI Insights */
+.ai-ins{margin:14px 14px 0;background:linear-gradient(135deg,rgba(68,138,255,.07),rgba(107,33,168,.07));border:1px solid rgba(68,138,255,.18);border-radius:14px;padding:13px;}
+.ai-ins-h{font-family:var(--font-mono);font-size:10px;font-weight:600;color:#3060C8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.ai-ins-b{font-family:var(--font-body);font-size:12px;color:var(--label-mid);line-height:1.6;}
+.ai-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+.ai-chip{font-family:var(--font-mono);font-size:9px;padding:3px 9px;border-radius:20px;font-weight:600;cursor:pointer;transition:transform .15s;}
+.ai-chip:active{transform:scale(.94);}
+.chip-tl{background:var(--tl-bg);color:var(--tl-t);border:1px solid var(--tl-bd);}
+.chip-vl{background:var(--vl-bg);color:var(--vl-t);border:1px solid var(--vl-bd);}
+.chip-am{background:var(--am-bg);color:var(--am-t);border:1px solid var(--am-bd);}
+.swot-save-btn{margin:12px 14px;width:calc(100% - 28px);height:52px;border-radius:14px;border:none;background:linear-gradient(120deg,var(--teal),var(--teal-d) 50%,var(--vl-dp));color:#fff;font-family:var(--font-mono);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.04em;box-shadow:0 6px 22px rgba(0,200,172,.3);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.swot-save-btn:active{transform:scale(.97);}
+
+/* ── S3: MATRIX ── */
+.mx-hdr{background:linear-gradient(135deg,#fff,#F2F5FF 60%,#EBF8F6);border-bottom:1px solid var(--fill-md);padding:11px 14px 9px;flex-shrink:0;}
+.mx-hdr-r{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.mx-ttl{font-family:var(--font-mono);font-size:16px;font-weight:700;color:var(--label);}
+.mx-cnt{font-family:var(--font-mono);font-size:9px;color:var(--label-muted);display:flex;align-items:center;gap:6px;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 5px var(--teal);animation:blink 1.8s ease-in-out infinite;display:inline-block;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.mx-tools{display:flex;gap:8px;}
+.mx-tool-btn{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:transform .15s;}
+.mx-tool-btn:active{transform:scale(.9);}
+.mx-ctrls{padding:7px 12px 5px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+.mx-srch-w{position:relative;}
+.mx-srch-ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--label-muted);pointer-events:none;}
+.mx-srch{width:100%;height:40px;background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:0 12px 0 34px;font-family:var(--font-body);font-size:13px;color:var(--label);outline:none;}
+.mx-r2{display:flex;gap:7px;}
+.gen-btn{flex:1;height:38px;background:linear-gradient(120deg,#059669,#047857);color:#fff;border:none;border-radius:10px;font-family:var(--font-mono);font-size:10px;font-weight:700;cursor:pointer;transition:transform .15s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.gen-btn:active{transform:scale(.97);}
+.sort-btn{height:38px;padding:0 12px;background:#fff;border:1.5px solid var(--line);border-radius:10px;font-family:var(--font-mono);font-size:10px;color:var(--label-mid);cursor:pointer;display:flex;align-items:center;gap:4px;}
+.mx-axis{display:flex;justify-content:space-between;padding:2px 12px;flex-shrink:0;}
+.mx-axis span{font-family:var(--font-mono);font-size:8px;color:var(--label-muted);text-transform:uppercase;letter-spacing:.5px;}
+.mx-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin:0 10px;border-radius:16px;overflow:hidden;background:var(--fill-md);}
+.mxq{padding:9px 8px 8px;display:flex;flex-direction:column;gap:5px;overflow:hidden;}
+.mxq.do{background:linear-gradient(145deg,#fff,#e8f9f0)}.mxq.sc{background:linear-gradient(145deg,#fff,#eff6ff)}.mxq.dg{background:linear-gradient(145deg,#fff,#fefce8)}.mxq.dp{background:linear-gradient(145deg,#fff,#fdf2f8)}
+.mxq-h{display:flex;align-items:center;gap:5px;padding-bottom:6px;border-bottom:1px solid var(--line);flex-shrink:0;}
+.mxq-b{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:#fff;}
+.do .mxq-b{background:#059669}.sc .mxq-b{background:#2563eb}.dg .mxq-b{background:#d97706}.dp .mxq-b{background:#db2777}
+.mxq-t{font-family:var(--font-mono);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
+.do .mxq-t{color:#065f46}.sc .mxq-t{color:#1e3a8a}.dg .mxq-t{color:#78350f}.dp .mxq-t{color:#831843}
+.mxq-cnt{margin-left:auto;font-size:9px;font-family:var(--font-mono);background:var(--fill-sm);border:1px solid var(--line);padding:1px 6px;border-radius:6px;color:var(--label-muted);}
+.tc-list{display:flex;flex-direction:column;gap:5px;overflow-y:auto;flex:1;max-height:220px;padding-bottom:2px;}
+.tc-list::-webkit-scrollbar{width:2px;}.tc-list::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px;}
+.task-card{background:#fff;border-radius:9px;padding:8px 9px;border-top:3px solid;cursor:grab;transition:transform .15s,box-shadow .15s;box-shadow:0 2px 8px rgba(10,15,46,.07);flex-shrink:0;animation:tcin .26s ease both;}
+.task-card:active{transform:scale(.96);cursor:grabbing;}
+@keyframes tcin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.do .task-card{border-top-color:#059669}.sc .task-card{border-top-color:#2563eb}.dg .task-card{border-top-color:#d97706}.dp .task-card{border-top-color:#db2777}
+.tc-top{display:flex;align-items:flex-start;gap:6px;}
+.tc-cb{width:16px;height:16px;border-radius:5px;flex-shrink:0;border:1.5px solid var(--line);margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;transition:all .2s;min-width:16px;color:#fff;}
+.do .tc-cb.chk{background:#059669;border-color:#059669}.sc .tc-cb.chk{background:#2563eb;border-color:#2563eb}.dg .tc-cb.chk{background:#d97706;border-color:#d97706}.dp .tc-cb.chk{background:#db2777;border-color:#db2777}
+.tc-body{flex:1;min-width:0;}
+.tc-ttl{font-size:10.5px;font-weight:600;color:var(--label);font-family:var(--font-body);line-height:1.3;}
+.tc-ttl.done{text-decoration:line-through;color:var(--label-muted);}
+.tc-meta{display:flex;align-items:center;gap:4px;margin-top:3px;flex-wrap:wrap;}
+.tc-tag{font-size:7.5px;font-weight:700;font-family:var(--font-mono);padding:1px 5px;border-radius:4px;}
+.tc-tag.hi{background:rgba(239,68,68,.1);color:#b91c1c;border:1px solid rgba(239,68,68,.2);}
+.tc-tag.md{background:rgba(212,175,55,.12);color:var(--gd-t);border:1px solid rgba(212,175,55,.25);}
+.tc-tag.lo{background:rgba(107,33,168,.1);color:var(--vl-dp);border:1px solid rgba(107,33,168,.2);}
+.tc-date{font-size:8px;color:var(--label-muted);font-family:var(--font-mono);}
+.tc-del{font-size:12px;cursor:pointer;opacity:.28;flex-shrink:0;padding:2px;transition:opacity .15s;}
+.tc-del:active{opacity:1;}
+.mx-add{display:flex;align-items:center;gap:5px;padding:5px 7px;border-radius:8px;border:1.5px dashed var(--line);cursor:pointer;opacity:.55;transition:opacity .15s;background:rgba(255,255,255,.5);flex-shrink:0;min-height:32px;}
+.mx-add:active{opacity:1;}
+.mx-add-l{font-family:var(--font-mono);font-size:8px;color:var(--label-muted);letter-spacing:.06em;text-transform:uppercase;}
+
+/* ── S4: SCALE OF PREFERENCE ── */
+.pf-hdr{background:linear-gradient(135deg,#fff,#F2F5FF 60%,#EBF8F6);border-bottom:1px solid var(--fill-md);padding:13px 18px 11px;flex-shrink:0;}
+.pf-title{font-family:var(--font-mono);font-size:17px;font-weight:700;color:var(--label);line-height:1.1;}
+.pf-instr{font-family:var(--font-body);font-size:12px;color:var(--label-mid);margin-top:6px;line-height:1.5;}
+.pf-instr span{color:var(--tl-dp);font-weight:600;}
+.pf-ctrls{padding:9px 14px 5px;display:flex;flex-direction:column;gap:7px;flex-shrink:0;}
+.pf-r1{display:flex;gap:8px;}
+.ai-pri-btn{flex:1;height:44px;border-radius:12px;border:none;background:linear-gradient(120deg,var(--violet-l),var(--violet));color:#fff;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 4px 14px rgba(107,33,168,.38);transition:all .15s;}
+.ai-pri-btn:active{transform:scale(.96);}
+.pf-chart{margin:0 14px;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 18px rgba(5,13,31,.1);border:1.5px solid var(--fill-md);}
+.pfc-hdr{padding:10px 14px 8px;border-bottom:1px solid var(--fill-sm);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,var(--fill-xs),#EFF1FA);}
+.pfc-ttl{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--label);display:flex;align-items:center;gap:6px;}
+.pfc-body{padding:11px 14px;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.bar-row:last-child{margin-bottom:0;}
+.bar-em{font-size:13px;width:18px;text-align:center;flex-shrink:0;}
+.bar-lb{font-family:var(--font-mono);font-size:8.5px;color:var(--label);width:76px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-tr{flex:1;height:14px;background:var(--fill-xs);border-radius:7px;border:1px solid var(--fill-md);overflow:hidden;}
+.bar-f{height:100%;border-radius:7px;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;transition:width .6s cubic-bezier(.34,1.2,.64,1);}
+.bar-s{font-family:var(--font-mono);font-size:7.5px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.25);}
+.bar-n{font-family:var(--font-mono);font-size:10px;font-weight:700;width:20px;text-align:right;flex-shrink:0;}
+.pol-list{padding:0 14px;display:flex;flex-direction:column;gap:10px;}
+.pol-card{background:#fff;position:relative;box-shadow:0 6px 24px rgba(5,13,31,.18);border-radius:12px;overflow:hidden;}
+.pol-strip{height:8px;}
+.pol-body{padding:12px 13px 8px;}
+.pol-hr{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.pol-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.pol-info{flex:1;}
+.pol-nm{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--label);line-height:1.25;}
+.pol-cat{font-family:var(--font-mono);font-size:8px;color:var(--label-muted);margin-top:2px;text-transform:uppercase;letter-spacing:.07em;}
+.pol-sn{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;}
+.pol-slw{position:relative;padding:4px 0 6px;}
+.pol-slt{position:absolute;top:50%;left:0;right:0;height:7px;border-radius:4px;background:var(--fill-sm);border:1px solid var(--fill-md);transform:translateY(-50%);pointer-events:none;}
+.pol-slf{position:absolute;top:50%;left:0;height:7px;border-radius:4px;transform:translateY(-50%);pointer-events:none;transition:width .15s,background .3s;}
+.pol-slr{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:transparent;position:relative;z-index:3;cursor:pointer;outline:none;}
+.pol-slr::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(5,13,31,.22);border:3px solid currentColor;cursor:grab;}
+.pol-foot{background:var(--fill-xs);border-top:1px solid var(--fill-md);padding:8px 13px 12px;display:flex;gap:6px;align-items:center;}
+.pol-tg{font-family:var(--font-mono);font-size:8px;border:1px solid var(--line);border-radius:4px;padding:2px 6px;color:var(--label-muted);background:#fff;}
+.pol-del{margin-left:auto;width:26px;height:26px;border-radius:6px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.04);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:#dc2626;}
+.pol-del:active{background:rgba(239,68,68,.12);}
+
+/* ── S5: GOALS ── */
+.goals-hdr{background:linear-gradient(135deg,#fff,#F2F5FF 60%,#EBF8F6);border-bottom:1px solid var(--fill-md);padding:12px 18px 10px;flex-shrink:0;}
+.gh-row{display:flex;justify-content:space-between;align-items:center;}
+.gh-ttl{font-family:var(--font-mono);font-size:17px;font-weight:700;color:var(--label);}
+.badge-pill{padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--font-mono);color:#fff;white-space:nowrap;}
+.badge-tl{background:linear-gradient(120deg,var(--teal),var(--teal-d));}
+.goal-c{margin:0 14px;background:#fff;border-radius:16px;border:1.5px solid var(--fill-md);box-shadow:0 3px 14px rgba(5,13,31,.09);overflow:hidden;margin-bottom:12px;}
+.gc-hdr{padding:11px 13px 0;display:flex;align-items:flex-start;gap:10px;}
+.gc-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.ico-teal{background:var(--tl-bg)}.ico-gold{background:var(--gd-bg)}.ico-vl{background:var(--vl-bg)}.ico-em{background:var(--em-bg)}
+.gc-meta{flex:1;}
+.gc-name{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--label);line-height:1.3;}
+.gc-cat{font-family:var(--font-mono);font-size:8px;color:var(--label-muted);margin-top:2px;text-transform:uppercase;letter-spacing:.07em;}
+.gc-pct{font-family:var(--font-mono);font-size:14px;font-weight:700;}
+.pct-g{color:var(--em-dp)}.pct-gd{color:var(--gd-t)}.pct-lo{color:var(--am-dp)}
+.gc-sl{padding:9px 13px 2px;}
+.sl-track{height:8px;background:var(--fill-sm);border-radius:4px;border:1px solid var(--fill-md);cursor:pointer;position:relative;overflow:hidden;}
+.sl-fill{height:100%;border-radius:4px;transition:width .4s cubic-bezier(.34,1.4,.64,1);}
+.slg{background:linear-gradient(90deg,var(--teal),var(--em))}.slgd{background:linear-gradient(90deg,var(--gold),var(--amber))}.slvl{background:linear-gradient(90deg,var(--vl-dp),#3060C8)}
+.gc-note{margin:7px 13px 11px;background:var(--fill-xs);border-radius:8px;padding:8px 10px;border:1px solid var(--line);}
+.gn-l{font-family:var(--font-mono);font-size:8px;font-weight:600;color:var(--label-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px;}
+.gn-t{font-family:var(--font-body);font-size:10px;color:var(--label-mid);line-height:1.55;}
+
+/* ── S6: PROFILE ── */
+.ph-hero{position:relative;overflow:hidden;background:linear-gradient(145deg,#0a1030,#16083a 50%,#220f52);flex-shrink:0;}
+.ph-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:38px 38px;}
+.ph-inner{position:relative;z-index:3;padding:14px 18px 0;}
+.ph-cvr{height:88px;border-radius:16px;overflow:hidden;margin-bottom:-28px;position:relative;cursor:pointer;}
+.ph-cvg{width:100%;height:100%;background:linear-gradient(118deg,#008A82,#6b21a8 50%,#c05a08);}
+.ph-av-row{display:flex;justify-content:space-between;align-items:flex-end;padding:0 2px;position:relative;z-index:3;}
+.ph-av-w{position:relative;cursor:pointer;margin-top:10px;}
+.ph-av{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,#008A82,#6b21a8);border:3.5px solid rgba(5,13,31,.9);display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;box-shadow:0 4px 22px rgba(0,200,172,.28);}
+.ph-lv{background:linear-gradient(120deg,var(--gold),var(--amber));color:#050d1f;font-family:var(--font-mono);font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:6px;}
+.ph-info{position:relative;z-index:3;padding:10px 2px 0;}
+.ph-nm{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#fff;letter-spacing:.07em;line-height:1;}
+.ph-hd{font-family:var(--font-mono);font-size:11px;color:var(--teal);margin-top:2px;}
+.ph-stats{display:flex;gap:6px;padding:12px 2px 18px;position:relative;z-index:3;}
+.ph-st{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:9px 6px 8px;text-align:center;cursor:pointer;}
+.ph-sv{font-family:var(--font-mono);font-size:14px;font-weight:700;color:#fff;line-height:1;}
+.ph-sv.t{color:var(--teal)}.ph-sv.g{color:var(--gold-l)}.ph-sv.a{color:var(--amber)}.ph-sv.v{color:var(--violet-l)}.ph-sv.e{color:var(--em)}
+.ph-sl{font-family:var(--font-mono);font-size:7px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.07em;margin-top:2px;}
+/* Accordion */
+.acc-wrap{padding:0 14px;display:flex;flex-direction:column;gap:9px;}
+.acc{background:#fff;border-radius:17px;overflow:hidden;box-shadow:0 3px 16px rgba(5,13,31,.1);border:1.5px solid var(--fill-md);}
+.acc-trig{width:100%;display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;background:transparent;border:none;text-align:left;}
+.acc-ico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.acc-ico.tl{background:var(--tl-bg)}.acc-ico.vl{background:var(--vl-bg)}.acc-ico.em{background:var(--em-bg)}.acc-ico.gd{background:var(--gd-bg)}.acc-ico.am{background:var(--am-bg)}.acc-ico.dk{background:var(--fill-sm)}
+.acc-info{flex:1;}
+.acc-t{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--label);}
+.acc-s{font-family:var(--font-body);font-size:10px;color:var(--label-muted);margin-top:1px;}
+.acc-ch{font-size:18px;color:var(--label-muted);transition:transform .32s cubic-bezier(.4,0,.2,1);flex-shrink:0;}
+.acc-ch.open{transform:rotate(90deg);}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.4,0,.2,1);}
+.acc-body.open{max-height:600px;border-top:1px solid var(--fill-md);}
+.acc-inner{padding:13px 14px;display:flex;flex-direction:column;gap:11px;}
+.tog-row{display:flex;align-items:center;justify-content:space-between;min-height:44px;}
+.tog-row+.tog-row{border-top:1px solid var(--fill-xs);padding-top:11px;}
+.tog-n{font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--label);}
+.sw-wrap{position:relative;width:47px;height:27px;flex-shrink:0;cursor:pointer;}
+.sw-wrap input{opacity:0;width:0;height:0;position:absolute;}
+.sw-track{position:absolute;inset:0;border-radius:14px;background:var(--fill-md);border:1.5px solid var(--line);transition:all .3s;}
+.sw-wrap input:checked+.sw-track{background:var(--teal);border-color:var(--tl-bd);}
+.sw-knob{position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 6px rgba(5,13,31,.22);transition:transform .3s cubic-bezier(.34,1.4,.64,1);pointer-events:none;}
+.sw-wrap input:checked~.sw-knob{transform:translateX(19px);}
+
+/* ═══════════════════════════════════════════════
+   TAXCHAIN APP STYLES
+═══════════════════════════════════════════════ */
+#taxchain-app{
+  background:var(--navy);
+  flex-direction:column;
+  height:100vh;height:-webkit-fill-available;
+  overflow:hidden;
+}
+.tc-screens{flex:1;overflow:hidden;position:relative;}
+.tc-screen{display:none;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:8px 0 80px;}
+.tc-screen::-webkit-scrollbar{display:none;}
+.tc-screen.active{display:block;}
+
+/* TaxChain Nav */
+.tc-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;height:var(--nav-h);
+  background:rgba(5,8,15,.96);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border-top:1px solid rgba(0,255,170,.1);
+  display:flex;align-items:flex-start;padding-top:8px;padding-bottom:var(--safe-b);z-index:500;
+}
+.tc-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0;cursor:pointer;border:none;background:transparent;color:rgba(100,116,139,1);transition:color .2s;}
+.tc-nav-item.active{color:var(--emerald);}
+.tc-nav-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;transition:background .2s;}
+.tc-nav-item.active .tc-nav-icon{background:rgba(0,255,170,.1);}
+.tc-nav-label{font-size:9px;font-weight:600;font-family:var(--font-mono);letter-spacing:.04em;}
+
+/* TC Cards */
+.tc-card{
+  background:rgba(13,21,37,.85);border:1px solid rgba(0,255,170,.1);
+  border-radius:16px;padding:16px;margin-bottom:12px;
+  backdrop-filter:blur(10px);
+}
+.tc-card-title{
+  font-family:var(--font-display);font-size:12px;font-weight:700;
+  color:rgba(148,163,184,.9);text-transform:uppercase;letter-spacing:.06em;
+  margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;
+}
+/* Balance display */
+.tc-balance{
+  text-align:center;padding:24px 16px 18px;
+  background:linear-gradient(160deg,#0D1525,#05080F);
+  border:1px solid rgba(0,255,170,.1);border-radius:18px;margin-bottom:12px;position:relative;overflow:hidden;
+}
+.tc-balance::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:radial-gradient(circle,rgba(0,255,170,.08) 0%,transparent 70%);border-radius:50%;}
+.tc-bal-label{font-size:11px;color:#64748B;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-family:var(--font-mono);}
+.tc-bal-amount{font-family:var(--font-display);font-size:2.2rem;font-weight:800;letter-spacing:-.04em;color:var(--emerald);text-shadow:0 0 30px rgba(0,255,170,.4);}
+.tc-bal-change{font-size:12px;color:#64748B;margin-top:4px;font-family:var(--font-dm);}
+.tc-bal-positive{color:var(--emerald);}
+/* Mini stats */
+.tc-mini-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.tc-mini-stat{background:rgba(13,21,37,.85);border:1px solid rgba(0,255,170,.08);border-radius:10px;padding:10px 8px;text-align:center;}
+.tc-ms-val{font-family:var(--font-mono);font-size:0.88rem;font-weight:600;color:#fff;margin-bottom:2px;}
+.tc-ms-lbl{font-size:9px;color:#64748B;text-transform:uppercase;letter-spacing:.05em;font-family:var(--font-mono);}
+/* Progress bars */
+.tc-prog-wrap{margin-bottom:10px;}
+.tc-prog-header{display:flex;justify-content:space-between;font-size:11px;color:#94A3B8;margin-bottom:5px;font-family:var(--font-dm);}
+.tc-prog-bar{height:6px;background:#111D30;border-radius:99px;overflow:hidden;}
+.tc-prog-fill{height:100%;border-radius:99px;transition:width 1s ease;}
+/* AI Bubble */
+.tc-ai-bubble{background:linear-gradient(135deg,rgba(0,255,170,.07),rgba(0,200,130,.04));border:1px solid rgba(0,255,170,.18);border-radius:14px;padding:13px;margin-bottom:12px;}
+.tc-ai-hdr{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700;color:var(--emerald);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;font-family:var(--font-mono);}
+.tc-ai-text{font-size:12px;color:#94A3B8;line-height:1.55;font-family:var(--font-dm);}
+/* TX items */
+.tc-tx-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.tc-tx-item:last-child{border:none;}
+.tc-tx-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.tc-tx-info{flex:1;}
+.tc-tx-name{font-size:12px;font-weight:600;color:#fff;font-family:var(--font-dm);}
+.tc-tx-date{font-size:10px;color:#64748B;margin-top:1px;font-family:var(--font-mono);}
+.tc-tx-amount{font-family:var(--font-mono);font-size:12px;font-weight:600;text-align:right;}
+.tc-tx-tax{font-size:9px;color:#64748B;text-align:right;margin-top:1px;font-family:var(--font-mono);}
+/* Blockchain badge */
+.tc-bc-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.22);border-radius:99px;font-size:10px;font-weight:700;color:#8B5CF6;font-family:var(--font-mono);}
+/* App btn */
+.tc-btn{width:100%;padding:11px;background:linear-gradient(135deg,var(--emerald),#00C882);border:none;border-radius:12px;color:#05080F;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font-dm);transition:all .2s;box-shadow:0 6px 20px rgba(0,255,170,.3);}
+.tc-btn:active{transform:scale(.98);}
+.tc-btn-outline{width:100%;padding:10px;background:transparent;border:1px solid rgba(0,255,170,.2);border-radius:12px;color:#94A3B8;font-weight:600;font-size:12px;cursor:pointer;font-family:var(--font-dm);margin-top:8px;transition:all .2s;}
+.tc-btn-outline:active{border-color:var(--emerald);color:var(--emerald);}
+/* Planner sliders */
+.tc-slider-wrap{margin-bottom:14px;}
+.tc-slider-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.tc-slider-label{font-size:12px;font-weight:600;color:#94A3B8;font-family:var(--font-dm);}
+.tc-slider-val{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--emerald);}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:99px;background:rgba(255,255,255,.08);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--emerald),#00C882);box-shadow:0 0 8px rgba(0,255,170,.5);cursor:pointer;}
+/* Tax bracket rows */
+.tc-bracket-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.tc-bracket-row:last-child{border:none;}
+.tc-bracket-color{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+.tc-bracket-info{flex:1;}
+.tc-bracket-name{font-size:12px;font-weight:600;color:#fff;font-family:var(--font-dm);}
+.tc-bracket-range{font-size:10px;color:#64748B;font-family:var(--font-mono);}
+.tc-bracket-rate{font-family:var(--font-mono);font-size:13px;font-weight:700;}
+/* Report metrics */
+.tc-report-metric{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.tc-report-metric:last-child{border:none;}
+.tc-rm-label{font-size:12px;color:#94A3B8;font-family:var(--font-dm);}
+.tc-rm-val{font-family:var(--font-mono);font-size:13px;font-weight:700;}
+/* Learn lessons */
+.tc-lesson-card{background:rgba(13,21,37,.85);border:1px solid rgba(255,255,255,.07);border-radius:14px;margin-bottom:8px;overflow:hidden;cursor:pointer;transition:border-color .2s;}
+.tc-lesson-card:hover{border-color:rgba(0,255,170,.2);}
+.tc-lesson-card.open{border-color:rgba(0,255,170,.25);}
+.tc-lesson-card.completed{border-color:rgba(0,255,170,.2);}
+.tc-lesson-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;user-select:none;}
+.tc-lesson-num{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .3s;}
+.tc-lesson-num.done{background:linear-gradient(135deg,var(--emerald),#00C882);font-size:12px;color:#05080F;}
+.tc-lesson-meta{flex:1;}
+.tc-lesson-title{font-weight:700;font-size:13px;color:#fff;margin-bottom:2px;font-family:var(--font-dm);}
+.tc-lesson-card.open .tc-lesson-title{color:var(--emerald);}
+.tc-lesson-diff{font-size:10px;color:#64748B;font-family:var(--font-mono);}
+.tc-lesson-body{display:none;padding:0 14px 14px;border-top:1px solid rgba(255,255,255,.06);}
+.tc-lesson-card.open .tc-lesson-body{display:block;}
+.tc-lesson-text{font-size:12px;color:#94A3B8;line-height:1.65;margin-top:12px;font-family:var(--font-dm);}
+.tc-lesson-text strong{color:#fff;}
+.tc-lesson-text em{color:var(--emerald);font-style:normal;font-weight:600;}
+.tc-callout{border-radius:10px;padding:11px 13px;margin:10px 0;font-size:12px;line-height:1.55;font-family:var(--font-dm);}
+.tc-callout-tip{background:rgba(0,255,170,.06);border-left:3px solid var(--emerald);color:#94A3B8;}
+.tc-callout-warn{background:rgba(232,185,35,.07);border-left:3px solid #E8B923;color:#94A3B8;}
+.tc-callout-label{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;font-family:var(--font-mono);}
+.tc-complete-btn{width:100%;padding:9px;background:transparent;border:1px dashed var(--emerald);border-radius:10px;color:var(--emerald);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-dm);margin-top:12px;transition:all .25s;}
+.tc-complete-btn:hover{background:rgba(0,255,170,.08);}
+.tc-complete-btn.done{background:linear-gradient(135deg,var(--emerald),#00C882);border-style:solid;color:#05080F;cursor:default;}
+/* Source cards */
+.tc-source-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.tc-source-card{background:rgba(13,21,37,.8);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;}
+.tc-source-card:hover{border-color:rgba(0,255,170,.25);}
+.tc-source-card.connected{border-color:rgba(0,255,170,.3);background:rgba(0,255,170,.05);}
+.tc-source-icon{font-size:1.3rem;margin-bottom:5px;}
+.tc-source-name{font-size:11px;font-weight:700;color:#fff;font-family:var(--font-dm);}
+.tc-source-status{font-size:10px;color:#64748B;margin-top:2px;font-family:var(--font-mono);}
+.tc-source-status.ok{color:var(--emerald);}
+/* Scenario cards */
+.tc-scenario{background:rgba(13,21,37,.7);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.tc-scenario:hover{border-color:rgba(0,255,170,.25);}
+.tc-scenario.selected{border-color:rgba(0,255,170,.4);background:rgba(0,255,170,.06);}
+.tc-scenario-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.tc-scenario-name{font-weight:700;font-size:13px;color:#fff;font-family:var(--font-dm);}
+.tc-scenario-saving{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--emerald);}
+.tc-scenario-desc{font-size:11px;color:#64748B;font-family:var(--font-dm);}
+/* Learn progress */
+.tc-learn-hero{background:linear-gradient(135deg,rgba(0,255,170,.07),rgba(139,92,246,.07));border:1px solid rgba(0,255,170,.15);border-radius:14px;padding:16px;margin-bottom:12px;}
+.tc-learn-title{font-family:var(--font-display);font-size:15px;font-weight:800;color:#fff;margin-bottom:3px;}
+.tc-learn-sub{font-size:11px;color:#64748B;margin-bottom:12px;font-family:var(--font-mono);}
+.tc-learn-prog-bar{height:5px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;}
+.tc-learn-prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--emerald),#00C882);transition:width .6s ease;}
+.tc-learn-xp-row{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;font-family:var(--font-mono);}
+.tc-learn-xp{color:var(--emerald);}
+.tc-learn-done{color:#64748B;}
+/* Section pads */
+.tc-section-pad{padding:0 14px;}
+.tc-section-label{font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#64748B;padding:10px 14px 6px;}
+
+/* ═══════════════════════ SHARED / ANIMATIONS ═══════════════════════ */
+@keyframes da{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,30px)}}
+@keyframes db{0%,100%{transform:translate(0,0)}50%{transform:translate(-24px,16px)}}
+@keyframes dc{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-20px)}}
+
+/* Toast */
+.toast{position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;transform:translateX(-50%) translateY(10px);border-radius:12px;padding:10px 20px;color:#fff;font-size:12px;font-family:var(--font-body);font-weight:500;opacity:0;transition:opacity .22s,transform .22s;z-index:9000;white-space:nowrap;max-width:88%;pointer-events:none;box-shadow:0 8px 24px rgba(5,13,31,.5);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.swot-toast{background:var(--label);border:1px solid var(--line-dark);}
+.toast.tc-toast{background:#0D1525;border:1px solid rgba(0,255,170,.25);color:var(--emerald);}
+</style>
+</head>
+<body>
+
+<!-- BRIDGE OVERLAY -->
+<div id="bridge-overlay">
+  <div class="bridge-logo">SWOT × TaxChain</div>
+  <div class="bridge-sub">Switching modules…</div>
+  <div class="bridge-spin"></div>
+</div>
+
+<!-- GLOBAL MODE TOGGLE BAR -->
+<div id="mode-toggle-bar">
+  <div class="mtb-brand">
+    <div class="mtb-brand-icon">⛓️</div>
+    <span>SWOT × TaxChain</span>
+  </div>
+  <div class="mtb-seg">
+    <button class="mtb-pill active" id="pill-swot" onclick="switchAppMode('swot')">📊 SWOT</button>
+    <button class="mtb-pill taxchain" id="pill-tc" onclick="switchAppMode('taxchain')">⛓️ TaxChain</button>
+  </div>
+  <div class="mtb-score" id="mtb-xp" onclick="showToast('🪙 240 XP earned this month!','swot-toast')">🪙 240</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SWOT APP
+═══════════════════════════════════════════ -->
+<div id="swot-app" class="app-mode active">
+  <div class="mode-topbar-spacer"></div>
+
+  <!-- ═══ HOME ═══ -->
+  <div class="swot-screen active" id="ss1">
+    <div class="hm-hero">
+      <div class="hm-orb hmo1"></div><div class="hm-orb hmo2"></div>
+      <div class="hm-grid"></div>
+      <div class="hm-inner">
+        <div class="hm-top">
+          <div>
+            <div class="hm-greet">Good morning, CryptoTripxz 👋</div>
+            <div class="hm-name">March 2026</div>
+            <div class="hm-lv">Lv 4 · SWOT Analyst</div>
+          </div>
+          <div class="hm-bell" onclick="showToast('🔔 No new notifications','swot-toast')">🔔</div>
+        </div>
+        <div class="hm-stats">
+          <div class="hst" onclick="showToast('📅 Month 3','swot-toast')"><div class="hst-v t">3</div><div class="hst-l">Months</div></div>
+          <div class="hst" onclick="switchSwotScreen(2)"><div class="hst-v g">3</div><div class="hst-l">SWOTs</div></div>
+          <div class="hst" onclick="showToast('🔥 7-day streak!','swot-toast')"><div class="hst-v a">🔥7</div><div class="hst-l">Streak</div></div>
+          <div class="hst"><div class="hst-v v" id="hm-xp">240</div><div class="hst-l">XP</div></div>
+          <div class="hst" onclick="switchSwotScreen(5)"><div class="hst-v e">75%</div><div class="hst-l">Goals</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="xpbar">
+      <div class="xpbar-r"><span class="xpbar-l">XP Progress</span><span class="xpbar-v" id="hm-xplbl">240 / 400 XP</span></div>
+      <div class="xp-tr"><div class="xp-f" id="hm-xpf"></div></div>
+    </div>
+    <div class="page-scroll">
+      <div class="sec-lt" style="padding-top:12px;">SWOT Summary <a onclick="switchSwotScreen(2)">Edit →</a></div>
+      <div class="qs-card">
+        <div class="qs-hdr">
+          <div class="qs-ttl">Mar 2026 · SWOT Analysis</div>
+          <div class="qs-tog" id="swot-tog" onclick="toggleSwotCollapse()">▲ Collapse</div>
+        </div>
+        <div id="swot-body">
+          <div class="qs-grid">
+            <div class="qs-q qs-s"><div class="qs-qh"><div class="qs-dot qsd-s"></div>S · Strengths</div><div class="qs-item">Self-Discipline</div><div class="qs-item">Long-term mindset</div><div class="qs-item">Risk management</div></div>
+            <div class="qs-q qs-w"><div class="qs-qh"><div class="qs-dot qsd-w"></div>W · Weaknesses</div><div class="qs-item">FOMO tendencies</div><div class="qs-item">Over-diversified</div><div class="qs-item">Overleveraged</div></div>
+            <div class="qs-q qs-o"><div class="qs-qh"><div class="qs-dot qsd-o"></div>O · Opportunities</div><div class="qs-item">Airdrop Alerts</div><div class="qs-item">DeFi yield plays</div><div class="qs-item">Layer 2 growth</div></div>
+            <div class="qs-q qs-t"><div class="qs-qh"><div class="qs-dot qsd-t"></div>T · Threats</div><div class="qs-item">Market Volatility</div><div class="qs-item">Regulatory risk</div><div class="qs-item">Smart contract bugs</div></div>
+          </div>
+        </div>
+        <div class="qs-foot">
+          <div class="qs-btn qs-edit" onclick="showToast('✅ Analysis up to date','swot-toast')">✓ Updated today</div>
+          <div class="qs-btn qs-new" onclick="switchSwotScreen(2)">＋ New Entry</div>
+        </div>
+      </div>
+      <div class="sec-lt">Quick Actions</div>
+      <div class="qa-grid">
+        <div class="qa-tile" style="background:var(--tl-bg);border:1.5px solid var(--tl-bd);" onclick="switchSwotScreen(2)">
+          <div class="qa-icon">✍️</div><div class="qa-lbl" style="color:var(--tl-t);">New SWOT</div>
+        </div>
+        <div class="qa-tile" style="background:var(--vl-bg);border:1.5px solid var(--vl-bd);" onclick="switchSwotScreen(3)">
+          <div class="qa-icon">⚔️</div><div class="qa-lbl" style="color:var(--vl-t);">Matrix</div>
+        </div>
+        <div class="qa-tile" style="background:var(--gd-bg);border:1.5px solid var(--gd-bd);" onclick="switchSwotScreen(4)">
+          <div class="qa-icon">⚖️</div><div class="qa-lbl" style="color:var(--gd-t);">Rank</div>
+        </div>
+        <div class="qa-tile" style="background:var(--em-bg);border:1.5px solid var(--em-bd);" onclick="switchSwotScreen(5)">
+          <div class="qa-icon">🎯</div><div class="qa-lbl" style="color:var(--em-t);">Goals</div>
+        </div>
+      </div>
+
+      <!-- TaxChain CTA — the bridge! -->
+      <div class="sec-dk">Connected Tools</div>
+      <div class="taxchain-cta" onclick="switchAppMode('taxchain')">
+        <div class="tc-cta-icon">⛓️</div>
+        <div class="tc-cta-info">
+          <div class="tc-cta-t">Open TaxChain UK</div>
+          <div class="tc-cta-s">Blockchain-verified tax intelligence · HMRC compliant · AI optimised savings</div>
+        </div>
+        <div class="tc-cta-arr">›</div>
+      </div>
+
+      <div class="hm-quote">
+        <span class="hq-m">"</span>
+        <div class="hq-t">Build <span class="hl">Tenacity</span> — the market rewards those who outlast the storm, not those who time it.</div>
+        <div class="hq-a">— SWOT Crypto · March 2026</div>
+      </div>
+      <div class="sec-lt" style="margin-top:10px;">Recent Activity</div>
+      <div class="ri-wrap">
+        <div class="ri" onclick="switchSwotScreen(2)"><div class="ri-ic" style="background:var(--tl-bg);">✍️</div><div class="ri-info"><div class="ri-t">SWOT Analysis saved</div><div class="ri-s">Today, 9:12 AM · Mar 2026</div></div><div class="ri-v" style="color:var(--em-dp);">+20 🪙</div></div>
+        <div class="ri" onclick="switchSwotScreen(3)"><div class="ri-ic" style="background:#e8f9f0;">✅</div><div class="ri-info"><div class="ri-t">Task completed: Stop-loss set</div><div class="ri-s">Yesterday · Matrix</div></div><div class="ri-v" style="color:var(--em-dp);">+20 🪙</div></div>
+        <div class="ri" onclick="switchAppMode('taxchain')"><div class="ri-ic" style="background:rgba(0,255,170,.1);">⛓️</div><div class="ri-info"><div class="ri-t">TaxChain: £3,847 saved</div><div class="ri-s">Feb 2026 · AI Optimisation</div></div><div class="ri-v" style="color:var(--emerald);">£3,847</div></div>
+        <div class="ri" onclick="switchSwotScreen(4)"><div class="ri-ic" style="background:var(--vl-bg);">⚖️</div><div class="ri-info"><div class="ri-t">AI Prioritised: 6 items ranked</div><div class="ri-s">Feb 24 · Scale of Preference</div></div><div class="ri-v" style="color:var(--vl-dp);">Done</div></div>
+      </div>
+      <div style="height:14px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ SWOT ENTRY ═══ -->
+  <div class="swot-screen" id="ss2">
+    <div class="mode-topbar-spacer"></div>
+    <div class="entry-hdr">
+      <div><div class="entry-title">New SWOT Entry</div><div class="entry-sub">March 2026 · CryptoTripxz</div></div>
+      <button class="save-btn" onclick="saveSwot()">Save ✓</button>
+    </div>
+    <div class="page-scroll">
+      <div class="sec-lt" style="padding-top:10px;">SWOT Grid</div>
+      <div class="eq-grid" id="eq-grid">
+        <div class="eq-q s" id="eq-s">
+          <div class="eq-h"><div class="eq-dot"></div>S · Strengths</div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">Self-Discipline</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">Long-term mindset</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">Risk management</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-add" onclick="addSwotItem('s')"><span class="eq-add-l">+ Add strength…</span></div>
+        </div>
+        <div class="eq-q w" id="eq-w">
+          <div class="eq-h"><div class="eq-dot"></div>W · Weaknesses</div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">FOMO tendencies</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">Over-diversified</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">Overleveraged</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-add" onclick="addSwotItem('w')"><span class="eq-add-l">+ Add weakness…</span></div>
+        </div>
+        <div class="eq-q o" id="eq-o">
+          <div class="eq-h"><div class="eq-dot"></div>O · Opportunities</div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">Airdrop Alerts</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">DeFi yield plays</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">Layer 2 growth</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-add" onclick="addSwotItem('o')"><span class="eq-add-l">+ Add opportunity…</span></div>
+        </div>
+        <div class="eq-q t" id="eq-t">
+          <div class="eq-h"><div class="eq-dot"></div>T · Threats</div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">Market Volatility</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">Regulatory risk</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-item"><div class="eq-dot"></div><span class="eq-txt">Smart contract bugs</span><span class="eq-del" onclick="removeSwotItem(this)">×</span></div>
+          <div class="eq-add" onclick="addSwotItem('t')"><span class="eq-add-l">+ Add threat…</span></div>
+        </div>
+      </div>
+      <div class="ai-ins" id="ai-ins-card">
+        <div class="ai-ins-h"><span>⚡</span><span>AI Insights</span><button onclick="refreshAIInsights(true)" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--teal);margin-left:auto;">↻</button></div>
+        <div class="ai-ins-b" id="ai-ins-body"><span style="color:var(--label-muted);font-size:11px;">Add items to your SWOT grid to get personalised insights.</span></div>
+        <div class="ai-chips" id="ai-ins-chips"></div>
+      </div>
+      <!-- TaxChain integration prompt -->
+      <div style="margin:0 14px 14px;background:linear-gradient(135deg,rgba(0,255,170,.07),rgba(0,200,172,.04));border:1px solid rgba(0,255,170,.18);border-radius:14px;padding:13px;cursor:pointer;" onclick="switchAppMode('taxchain')">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--emerald);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;">⛓️ TaxChain Connection</div>
+        <div style="font-family:var(--font-body);font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;">Your SWOT Threats include <strong style="color:#fff;">Regulatory risk</strong>. Switch to TaxChain to model your <em style="color:var(--emerald);font-style:normal;">tax liability</em> and stress-test against regulatory scenarios. →</div>
+      </div>
+      <button class="swot-save-btn" onclick="saveSwot()">💾 Save SWOT &amp; Earn +20 XP</button>
+      <div style="height:6px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ MATRIX ═══ -->
+  <div class="swot-screen" id="ss3">
+    <div class="mode-topbar-spacer"></div>
+    <div class="mx-hdr">
+      <div class="mx-hdr-r">
+        <div><div class="mx-ttl">Importance Matrix</div><div class="mx-cnt"><span class="live-dot"></span><span id="mx-task-count">12 tasks</span></div></div>
+        <div class="mx-tools">
+          <div class="mx-tool-btn" onclick="showToast('↕ Sorted by Priority','swot-toast')">↕️</div>
+          <div class="mx-tool-btn" onclick="showToast('📸 Matrix saved!','swot-toast')">📸</div>
+        </div>
+      </div>
+    </div>
+    <div class="mx-ctrls">
+      <div class="mx-srch-w"><span class="mx-srch-ic">🔍</span><input class="mx-srch" type="text" placeholder="Search tasks…" oninput="filterTasks(this.value)"></div>
+      <div class="mx-r2">
+        <div class="gen-btn" onclick="showToast('⚡ Generating tasks from SWOT…','swot-toast')">⚡ Generate from SWOT</div>
+        <div class="sort-btn" onclick="showToast('↕ Sort options','swot-toast')">↕ Sort</div>
+      </div>
+    </div>
+    <div class="mx-axis"><span>← NOT URGENT</span><span>URGENT →</span></div>
+    <div class="page-scroll" style="padding-bottom:var(--nav-h);">
+      <div class="mx-grid" style="padding-bottom:8px;">
+        <div class="mxq do">
+          <div class="mxq-h"><div class="mxq-b">✅</div><span class="mxq-t">Do It</span><span class="mxq-cnt" id="cnt-do">3</span></div>
+          <div class="tc-list" id="tc-do">
+            <div class="task-card" draggable="true"><div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this)"></div><div class="tc-body"><div class="tc-ttl">Set Portfolio Stop-loss</div><div class="tc-meta"><span class="tc-tag hi">🔴 High</span><span class="tc-date">Due today</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div></div>
+            <div class="task-card" draggable="true"><div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this)"></div><div class="tc-body"><div class="tc-ttl">Rebalance BTC/ETH Ratio</div><div class="tc-meta"><span class="tc-tag hi">🔴 High</span><span class="tc-date">Due 2h</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div></div>
+            <div class="task-card" draggable="true"><div class="tc-top"><div class="tc-cb chk" onclick="toggleCheck(this)">✓</div><div class="tc-body"><div class="tc-ttl done">Review Gas Fees</div><div class="tc-meta"><span class="tc-tag md">🟡 Med</span><span class="tc-date">Done ✓</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div></div>
+          </div>
+          <div class="mx-add" onclick="addTaskCard('tc-do','cnt-do','do')"><span style="font-size:13px;color:#059669">＋</span><span class="mx-add-l">Add task</span></div>
+        </div>
+        <div class="mxq sc">
+          <div class="mxq-h"><div class="mxq-b">📅</div><span class="mxq-t">Schedule</span><span class="mxq-cnt" id="cnt-sc">3</span></div>
+          <div class="tc-list" id="tc-sc">
+            <div class="task-card" draggable="true"><div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this)"></div><div class="tc-body"><div class="tc-ttl">Resume Airdrop Hunting</div><div class="tc-meta"><span class="tc-tag md">📅 Med</span><span class="tc-date">Apr 1</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div></div>
+            <div class="task-card" draggable="true"><div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this)"></div><div class="tc-body"><div class="tc-ttl">DCA Strategy Review</div><div class="tc-meta"><span class="tc-tag md">📅 Med</span><span class="tc-date">Apr 5</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div></div>
+            <div class="task-card" draggable="true"><div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this)"></div><div class="tc-body"><div class="tc-ttl">Study L2 Protocols</div><div class="tc-meta"><span class="tc-tag lo">📅 Low</span><span class="tc-date">Apr 10</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div></div>
+          </div>
+          <div class="mx-add" onclick="addTaskCard('tc-sc','cnt-sc','sc')"><span style="font-size:13px;color:#2563eb">＋</span><span class="mx-add-l">Add task</span></div>
+        </div>
+        <div class="mxq dg">
+          <div class="mxq-h"><div class="mxq-b">🤝</div><span class="mxq-t">Delegate</span><span class="mxq-cnt" id="cnt-dg">2</span></div>
+          <div class="tc-list" id="tc-dg">
+            <div class="task-card" draggable="true"><div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this)"></div><div class="tc-body"><div class="tc-ttl">Configure Tax Reports</div><div class="tc-meta"><span class="tc-tag md">🤝 Delegate</span><span class="tc-date">→ TaxChain</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div></div>
+            <div class="task-card" draggable="true" onclick="switchAppMode('taxchain')"><div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this);event.stopPropagation()"></div><div class="tc-body"><div class="tc-ttl">Run Tax Optimiser ⛓️</div><div class="tc-meta"><span class="tc-tag lo">🤝 TaxChain</span><span class="tc-date">Tap to open</span></div></div></div></div>
+          </div>
+          <div class="mx-add" onclick="addTaskCard('tc-dg','cnt-dg','dg')"><span style="font-size:13px;color:#d97706">＋</span><span class="mx-add-l">Add task</span></div>
+        </div>
+        <div class="mxq dp">
+          <div class="mxq-h"><div class="mxq-b">🗑️</div><span class="mxq-t">Dump It</span><span class="mxq-cnt" id="cnt-dp">3</span></div>
+          <div class="tc-list" id="tc-dp">
+            <div class="task-card" draggable="true"><div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this)"></div><div class="tc-body"><div class="tc-ttl">Browse Meme Coins</div><div class="tc-meta"><span class="tc-tag lo">⬇ Low</span><span class="tc-date">Delete</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div></div>
+            <div class="task-card" draggable="true"><div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this)"></div><div class="tc-body"><div class="tc-ttl">Redesign Home Screen</div><div class="tc-meta"><span class="tc-tag lo">⬇ Low</span><span class="tc-date">Delete</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div></div>
+            <div class="task-card" draggable="true"><div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this)"></div><div class="tc-body"><div class="tc-ttl">Over-research NFTs</div><div class="tc-meta"><span class="tc-tag lo">⬇ Low</span><span class="tc-date">Someday</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div></div>
+          </div>
+          <div class="mx-add" onclick="addTaskCard('tc-dp','cnt-dp','dp')"><span style="font-size:13px;color:#db2777">＋</span><span class="mx-add-l">Add task</span></div>
+        </div>
+      </div>
+      <div style="height:8px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ SCALE OF PREFERENCE ═══ -->
+  <div class="swot-screen" id="ss4">
+    <div class="mode-topbar-spacer"></div>
+    <div class="pf-hdr">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div class="pf-title">Scale of<br>Preference</div>
+        <div class="badge-pill badge-tl" style="margin-top:4px;">⚖️ Priority Rank</div>
+      </div>
+      <div class="pf-instr">Rank crypto actions from <span>most to least preferred</span>. Drag sliders or tap ＋/－ to score.</div>
+    </div>
+    <div class="pf-ctrls">
+      <div class="pf-r1">
+        <button class="ai-pri-btn" onclick="runAIPrioritize()">⚡ AI Prioritize</button>
+        <button style="height:44px;padding:0 13px;border-radius:12px;border:1.5px solid rgba(0,200,172,.4);background:rgba(0,200,172,.08);color:var(--teal);font-family:var(--font-mono);font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;" onclick="showToast('⬇ Importing from SWOT…','swot-toast')">⬇ Import SWOT</button>
+      </div>
+    </div>
+    <div class="page-scroll">
+      <div class="pf-chart">
+        <div class="pfc-hdr"><div class="pfc-ttl">📊 Preference Ranking</div></div>
+        <div class="pfc-body" id="chartBody"></div>
+      </div>
+      <div class="sec-dk" style="margin-top:6px;">Ranked Items <span style="font-size:8px;color:var(--teal);" id="itemCountLabel">6 items</span></div>
+      <div class="pol-list" id="cardsList"></div>
+      <div style="height:14px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ GOALS ═══ -->
+  <div class="swot-screen" id="ss5">
+    <div class="mode-topbar-spacer"></div>
+    <div class="goals-hdr">
+      <div class="gh-row">
+        <div><div class="gh-ttl">Monthly Goals</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--label-muted);margin-top:2px;">March 2026 · CryptoTripxz</div></div>
+        <div class="badge-pill badge-tl">🎯 4 Active</div>
+      </div>
+    </div>
+    <div class="page-scroll">
+      <div class="sec-lt" style="padding-top:8px;">Active Goals <a onclick="showToast('+ Add Goal coming soon!','swot-toast')">+ Add →</a></div>
+      <div class="goal-c">
+        <div class="gc-hdr"><div class="gc-ico ico-teal">✍️</div><div class="gc-meta"><div class="gc-name">Refine Content Creation</div><div class="gc-cat">Creative · On-track 🟢</div></div><div class="gc-pct pct-g">72%</div></div>
+        <div class="gc-sl"><div class="sl-track"><div class="sl-fill slg" style="width:72%;"></div></div></div>
+        <div class="gc-note"><div class="gn-l">📝 Notes</div><div class="gn-t">"Short-form threads 2× vs long posts. Focus: chart analysis."</div></div>
+      </div>
+      <div class="goal-c">
+        <div class="gc-hdr"><div class="gc-ico ico-gold">📊</div><div class="gc-meta"><div class="gc-name">Daily Portfolio Research</div><div class="gc-cat">Analysis · On-track 🟢</div></div><div class="gc-pct pct-g">88%</div></div>
+        <div class="gc-sl"><div class="sl-track"><div class="sl-fill slgd" style="width:88%;"></div></div></div>
+        <div class="gc-note"><div class="gn-l">📝 Notes</div><div class="gn-t">"SOL ecosystem, L2 TVL. 45min/day on-chain data."</div></div>
+      </div>
+      <div class="goal-c">
+        <div class="gc-hdr"><div class="gc-ico ico-vl">💎</div><div class="gc-meta"><div class="gc-name">DeFi Yield Optimization</div><div class="gc-cat">Finance · In Progress 🟡</div></div><div class="gc-pct pct-lo">45%</div></div>
+        <div class="gc-sl"><div class="sl-track"><div class="sl-fill slvl" style="width:45%;"></div></div></div>
+        <div class="gc-note"><div class="gn-l">📝 Notes</div><div class="gn-t">"JUP/SOL LP. Exploring USDe yield. IL concern. → Use TaxChain for tax impact"</div></div>
+      </div>
+      <div class="goal-c">
+        <div class="gc-hdr"><div class="gc-ico ico-em">🛡️</div><div class="gc-meta"><div class="gc-name">Reduce FOMO Trades</div><div class="gc-cat">Discipline · In Progress 🟡</div></div><div class="gc-pct pct-gd">60%</div></div>
+        <div class="gc-sl"><div class="sl-track"><div class="sl-fill slg" style="width:60%;"></div></div></div>
+        <div class="gc-note"><div class="gn-l">📝 Notes</div><div class="gn-t">"Avoided 2 meme coin trades. 24h rule working ✓."</div></div>
+      </div>
+
+      <!-- TaxChain integration section -->
+      <div class="sec-dk">Tax Planning</div>
+      <div style="margin:0 14px 14px;background:linear-gradient(135deg,rgba(0,255,170,.06),rgba(139,92,246,.05));border:1.5px solid rgba(0,255,170,.15);border-radius:16px;padding:16px;cursor:pointer;" onclick="switchAppMode('taxchain')">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--emerald),#00C882);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;">⛓️</div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:13px;font-weight:800;color:var(--emerald);">TaxChain — 2025/26 Position</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;">Blockchain-verified · AI optimised</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div style="text-align:center;background:rgba(255,255,255,.04);border-radius:9px;padding:10px 6px;">
+            <div style="font-family:var(--font-mono);font-size:14px;font-weight:800;color:var(--emerald);">£11,360</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;font-family:var(--font-mono);">Tax Owed</div>
+          </div>
+          <div style="text-align:center;background:rgba(255,255,255,.04);border-radius:9px;padding:10px 6px;">
+            <div style="font-family:var(--font-mono);font-size:14px;font-weight:800;color:var(--gold-l);">£3,847</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;font-family:var(--font-mono);">AI Saved</div>
+          </div>
+          <div style="text-align:center;background:rgba(255,255,255,.04);border-radius:9px;padding:10px 6px;">
+            <div style="font-family:var(--font-mono);font-size:14px;font-weight:800;color:#8B5CF6;">99%</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;font-family:var(--font-mono);">HMRC ✓</div>
+          </div>
+        </div>
+        <div style="text-align:right;font-family:var(--font-mono);font-size:10px;color:var(--emerald);margin-top:10px;">Open TaxChain →</div>
+      </div>
+      <div style="height:14px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ PROFILE ═══ -->
+  <div class="swot-screen" id="ss6">
+    <div class="mode-topbar-spacer"></div>
+    <div class="ph-hero">
+      <div class="hm-orb hmo1"></div><div class="hm-orb hmo2"></div>
+      <div class="ph-grid"></div>
+      <div class="ph-inner">
+        <div class="ph-cvr"><div class="ph-cvg"></div></div>
+        <div class="ph-av-row">
+          <div class="ph-av-w"><div class="ph-av">🧑‍💻</div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px;">
+            <div class="ph-lv">Lv 4 · SWOT Analyst</div>
+            <button onclick="showToast('𝕏 Sharing SWOT…','swot-toast')" style="display:flex;align-items:center;gap:6px;background:linear-gradient(120deg,#111,#2a2a2a);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:10px;padding:8px 14px;font-family:var(--font-mono);font-size:11px;font-weight:600;cursor:pointer;">𝕏 Share SWOT</button>
+          </div>
+        </div>
+        <div class="ph-info">
+          <div class="ph-nm">CryptoTripxz</div>
+          <div class="ph-hd">@CryptoTripxz · SWOT × TaxChain</div>
+        </div>
+        <div class="ph-stats">
+          <div class="ph-st"><div class="ph-sv t">3</div><div class="ph-sl">SWOTs</div></div>
+          <div class="ph-st"><div class="ph-sv g">🔥7</div><div class="ph-sl">Streak</div></div>
+          <div class="ph-st"><div class="ph-sv a">240</div><div class="ph-sl">XP</div></div>
+          <div class="ph-st"><div class="ph-sv v">1</div><div class="ph-sl">Done</div></div>
+          <div class="ph-st" onclick="switchAppMode('taxchain')"><div class="ph-sv e">⛓️</div><div class="ph-sl">TaxChain</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="page-scroll">
+      <div class="sec-dk">Settings</div>
+      <div class="acc-wrap">
+        <div class="acc">
+          <button class="acc-trig" onclick="toggleAcc(this)"><div class="acc-ico tl">🔔</div><div class="acc-info"><div class="acc-t">Notifications</div><div class="acc-s">Daily reminders &amp; alerts</div></div><span class="acc-ch">›</span></button>
+          <div class="acc-body"><div class="acc-inner">
+            <div class="tog-row"><div class="tog-n">Daily SWOT Reminder</div><label class="sw-wrap"><input type="checkbox" checked><div class="sw-track"></div><div class="sw-knob"></div></label></div>
+            <div class="tog-row"><div class="tog-n">TaxChain Tax Alerts</div><label class="sw-wrap"><input type="checkbox" checked><div class="sw-track"></div><div class="sw-knob"></div></label></div>
+          </div></div>
+        </div>
+        <div class="acc">
+          <button class="acc-trig" onclick="toggleAcc(this)"><div class="acc-ico gd">🔗</div><div class="acc-info"><div class="acc-t">Integrations</div><div class="acc-s">Wallets, exchanges, TaxChain</div></div><span class="acc-ch">›</span></button>
+          <div class="acc-body"><div class="acc-inner">
+            <div class="tog-row"><div class="tog-n">⛓️ TaxChain UK</div><label class="sw-wrap"><input type="checkbox" checked><div class="sw-track"></div><div class="sw-knob"></div></label></div>
+            <div class="tog-row"><div class="tog-n">🦊 MetaMask</div><label class="sw-wrap"><input type="checkbox"><div class="sw-track"></div><div class="sw-knob"></div></label></div>
+            <div class="tog-row"><div class="tog-n">👻 Phantom</div><label class="sw-wrap"><input type="checkbox"><div class="sw-track"></div><div class="sw-knob"></div></label></div>
+          </div></div>
+        </div>
+        <div class="acc" style="background:linear-gradient(135deg,rgba(0,255,170,.03),rgba(13,21,37,.9));border-color:rgba(0,255,170,.15);">
+          <button class="acc-trig" onclick="switchAppMode('taxchain')" style="cursor:pointer;"><div class="acc-ico" style="background:rgba(0,255,170,.1);">⛓️</div><div class="acc-info"><div class="acc-t" style="color:var(--teal);">Open TaxChain App</div><div class="acc-s">UK Crypto Tax Intelligence → AI savings, HMRC compliance</div></div><span class="acc-ch" style="color:var(--teal);">›</span></button>
+        </div>
+      </div>
+      <div style="height:18px;"></div>
+    </div>
+  </div>
+
+  <!-- SWOT BOTTOM NAV -->
+  <nav class="swot-nav">
+    <button class="s-nav-item active" id="snav1" onclick="switchSwotScreen(1)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <div class="s-nav-label">Home</div>
+    </button>
+    <button class="s-nav-item" id="snav2" onclick="switchSwotScreen(2)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <div class="s-nav-label">SWOT</div>
+    </button>
+    <button class="s-nav-item" id="snav3" onclick="switchSwotScreen(3)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <div class="s-nav-label">Matrix</div>
+    </button>
+    <button class="s-nav-item" id="snav4" onclick="switchSwotScreen(4)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6" stroke-linecap="round" stroke-width="3"/><line x1="3" y1="12" x2="3.01" y2="12" stroke-linecap="round" stroke-width="3"/><line x1="3" y1="18" x2="3.01" y2="18" stroke-linecap="round" stroke-width="3"/></svg>
+      <div class="s-nav-label">Rank</div>
+    </button>
+    <button class="s-nav-item" id="snav5" onclick="switchSwotScreen(5)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div class="s-nav-label">Goals</div>
+    </button>
+    <button class="s-nav-item" id="snav6" onclick="switchSwotScreen(6)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="s-nav-label">Profile</div>
+    </button>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAXCHAIN APP
+═══════════════════════════════════════════ -->
+<div id="taxchain-app" class="app-mode" style="background:var(--navy);">
+  <div class="mode-topbar-spacer"></div>
+  <div class="tc-screens">
+
+    <!-- ═══ TC HOME ═══ -->
+    <div class="tc-screen active" id="tcs-home">
+      <div class="tc-section-pad">
+        <div class="tc-balance">
+          <div class="tc-bal-label">Total Tax Liability 2025/26</div>
+          <div class="tc-bal-amount" id="tc-total-tax">£11,360</div>
+          <div class="tc-bal-change">vs est. <span style="color:#94A3B8;">£15,207</span> unoptimised — <span class="tc-bal-positive">saving £3,847 ✦</span></div>
+          <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;">
+            <span class="tc-bc-badge">⛓️ Block #2,847,392</span>
+            <span class="tc-bc-badge" style="background:rgba(232,185,35,.1);border-color:rgba(232,185,35,.22);color:#E8B923;">✅ HMRC Verified</span>
+          </div>
+        </div>
+        <div class="tc-mini-stats">
+          <div class="tc-mini-stat"><div class="tc-ms-val">£8,240</div><div class="tc-ms-lbl">Inc. Tax</div></div>
+          <div class="tc-mini-stat"><div class="tc-ms-val">£3,120</div><div class="tc-ms-lbl">NI</div></div>
+          <div class="tc-mini-stat"><div class="tc-ms-val">£1,450</div><div class="tc-ms-lbl">CGT</div></div>
+        </div>
+        <div class="tc-ai-bubble">
+          <div class="tc-ai-hdr">🤖 AI Tax Insight</div>
+          <div class="tc-ai-text" id="tc-ai-insight">💡 A pension contribution of <strong>£5,000</strong> this month would reduce your income tax by <strong>£2,000</strong> (Higher Rate relief). ISA allowance: <strong>£5,000</strong> remaining — invest before 5 April. Your SWOT shows <em>Regulatory risk</em> — see planner for CGT scenarios.</div>
+        </div>
+        <!-- SWOT Integration panel -->
+        <div class="tc-card" style="cursor:pointer;border-color:rgba(212,175,55,.15);" onclick="switchAppMode('swot')">
+          <div class="tc-card-title" style="color:rgba(212,175,55,.7);">📊 SWOT Analysis Integration</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="background:rgba(0,200,172,.07);border:1px solid rgba(0,200,172,.15);border-radius:9px;padding:9px;">
+              <div style="font-size:10px;font-weight:700;color:var(--teal);font-family:var(--font-mono);margin-bottom:3px;">💪 Strengths</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.5);">Risk management → Pension top-up</div>
+            </div>
+            <div style="background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.15);border-radius:9px;padding:9px;">
+              <div style="font-size:10px;font-weight:700;color:var(--amber);font-family:var(--font-mono);margin-bottom:3px;">⚠️ Weaknesses</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.5);">Overleveraged → CGT review</div>
+            </div>
+            <div style="background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.15);border-radius:9px;padding:9px;">
+              <div style="font-size:10px;font-weight:700;color:var(--violet-l);font-family:var(--font-mono);margin-bottom:3px;">🚀 Opportunities</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.5);">DeFi yields → Income tax impact</div>
+            </div>
+            <div style="background:rgba(28,188,88,.07);border:1px solid rgba(28,188,88,.15);border-radius:9px;padding:9px;">
+              <div style="font-size:10px;font-weight:700;color:var(--em);font-family:var(--font-mono);margin-bottom:3px;">🛡️ Threats</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.5);">Reg risk → Voluntary disclosure</div>
+            </div>
+          </div>
+          <div style="text-align:right;font-family:var(--font-mono);font-size:9px;color:rgba(255,255,255,.25);margin-top:8px;">← Back to SWOT</div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-card-title">Tax Position</div>
+          <div class="tc-prog-wrap">
+            <div class="tc-prog-header"><span>Basic Rate Band</span><span style="color:#00FFAA;">£37,700 used</span></div>
+            <div class="tc-prog-bar"><div class="tc-prog-fill" style="width:100%;background:linear-gradient(90deg,#00FFAA,#00C882);"></div></div>
+          </div>
+          <div class="tc-prog-wrap">
+            <div class="tc-prog-header"><span>Higher Rate Band</span><span style="color:#E8B923;">£7,430 used</span></div>
+            <div class="tc-prog-bar"><div class="tc-prog-fill" style="width:10%;background:linear-gradient(90deg,#E8B923,#F59E0B);"></div></div>
+          </div>
+          <div class="tc-prog-wrap">
+            <div class="tc-prog-header"><span>ISA Allowance</span><span style="color:#8B5CF6;">£15,000 / £20,000</span></div>
+            <div class="tc-prog-bar"><div class="tc-prog-fill" style="width:75%;background:linear-gradient(90deg,#8B5CF6,#EC4899);"></div></div>
+          </div>
+        </div>
+        <button class="tc-btn" onclick="switchTCScreen('reports')">📄 View Full Report</button>
+        <button class="tc-btn-outline" onclick="switchTCScreen('planner')">📅 Open Tax Planner</button>
+      </div>
+    </div>
+
+    <!-- ═══ TC IMPORT ═══ -->
+    <div class="tc-screen" id="tcs-import">
+      <div class="tc-section-pad">
+        <div style="border:2px dashed rgba(0,255,170,.2);border-radius:14px;padding:28px 16px;text-align:center;cursor:pointer;margin-bottom:12px;transition:all .3s;" onclick="showToast('📁 File picker opened','tc-toast')">
+          <div style="font-size:2rem;margin-bottom:8px;">📂</div>
+          <div style="font-weight:700;font-size:14px;color:#fff;margin-bottom:5px;">Import Transactions</div>
+          <div style="font-size:12px;color:#64748B;">CSV, OFX, QIF or Open Banking</div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-card-title">Bank Connections</div>
+          <div class="tc-source-grid">
+            <div class="tc-source-card connected" onclick="showToast('🏦 Monzo synced — 847 txns','tc-toast')"><div class="tc-source-icon">🟠</div><div class="tc-source-name">Monzo</div><div class="tc-source-status ok">● Connected</div></div>
+            <div class="tc-source-card connected" onclick="showToast('🏦 Barclays synced','tc-toast')"><div class="tc-source-icon">🔵</div><div class="tc-source-name">Barclays</div><div class="tc-source-status ok">● Connected</div></div>
+            <div class="tc-source-card" onclick="showToast('🔗 Connecting Starling…','tc-toast')"><div class="tc-source-icon">🟢</div><div class="tc-source-name">Starling</div><div class="tc-source-status">○ Connect</div></div>
+            <div class="tc-source-card" onclick="showToast('🔗 Connecting HSBC…','tc-toast')"><div class="tc-source-icon">🔴</div><div class="tc-source-name">HSBC</div><div class="tc-source-status">○ Connect</div></div>
+          </div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-card-title">Exchange Connections</div>
+          <div class="tc-source-grid">
+            <div class="tc-source-card connected"><div class="tc-source-icon">🟡</div><div class="tc-source-name">Binance</div><div class="tc-source-status ok">● 423 trades</div></div>
+            <div class="tc-source-card connected"><div class="tc-source-icon">🔷</div><div class="tc-source-name">Coinbase</div><div class="tc-source-status ok">● 156 trades</div></div>
+            <div class="tc-source-card" onclick="showToast('🔗 Connecting Kraken…','tc-toast')"><div class="tc-source-icon">🐙</div><div class="tc-source-name">Kraken</div><div class="tc-source-status">○ Connect</div></div>
+            <div class="tc-source-card" onclick="showToast('🔗 Connecting eToro…','tc-toast')"><div class="tc-source-icon">🟩</div><div class="tc-source-name">eToro</div><div class="tc-source-status">○ Connect</div></div>
+          </div>
+        </div>
+        <div class="tc-ai-bubble">
+          <div class="tc-ai-hdr">🤖 Import AI</div>
+          <div class="tc-ai-text">2,626 transactions classified. <strong>94.2% auto-tagged</strong>. 52 transactions need manual review — mostly Coinbase DeFi income vs capital events.</div>
+        </div>
+        <button class="tc-btn" onclick="showToast('⚡ Syncing all accounts…','tc-toast')">⚡ Sync All Accounts</button>
+      </div>
+    </div>
+
+    <!-- ═══ TC REPORTS ═══ -->
+    <div class="tc-screen" id="tcs-reports">
+      <div class="tc-section-pad">
+        <div class="tc-card">
+          <div class="tc-card-title">Tax Summary 2025/26 <span class="tc-bc-badge" style="font-size:9px;">⛓️ Verified</span></div>
+          <div class="tc-report-metric"><div class="tc-rm-label">Gross Income</div><div class="tc-rm-val" style="color:#fff;">£57,700</div></div>
+          <div class="tc-report-metric"><div class="tc-rm-label">Personal Allowance</div><div class="tc-rm-val" style="color:#64748B;">£12,570</div></div>
+          <div class="tc-report-metric"><div class="tc-rm-label">Taxable Income</div><div class="tc-rm-val" style="color:#94A3B8;">£45,130</div></div>
+          <div class="tc-report-metric"><div class="tc-rm-label">Income Tax</div><div class="tc-rm-val" style="color:#00FFAA;">£8,240</div></div>
+          <div class="tc-report-metric"><div class="tc-rm-label">National Insurance</div><div class="tc-rm-val" style="color:#FF6B6B;">£3,120</div></div>
+          <div class="tc-report-metric"><div class="tc-rm-label">Capital Gains Tax</div><div class="tc-rm-val" style="color:#FF6B6B;">£1,450</div></div>
+          <div style="padding:12px 0;margin-top:6px;border-top:2px solid rgba(0,255,170,.2);display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-weight:700;font-size:13px;color:#fff;">Total Liability</div>
+            <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:800;color:#FF6B6B;">£12,810</div>
+          </div>
+          <div style="background:rgba(0,255,170,.08);border-radius:8px;padding:10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:11px;color:var(--emerald);font-family:var(--font-mono);">🤖 AI Optimised Saving</div>
+            <div style="font-family:var(--font-mono);font-weight:700;color:var(--emerald);">- £3,847</div>
+          </div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-card-title">2025/26 Tax Bands</div>
+          <div class="tc-bracket-row"><div class="tc-bracket-color" style="background:#64748B;"></div><div class="tc-bracket-info"><div class="tc-bracket-name">Personal Allowance</div><div class="tc-bracket-range">£0 – £12,570</div></div><div class="tc-bracket-rate" style="color:#64748B;">0%</div></div>
+          <div class="tc-bracket-row"><div class="tc-bracket-color" style="background:#00FFAA;"></div><div class="tc-bracket-info"><div class="tc-bracket-name">Basic Rate</div><div class="tc-bracket-range">£12,571 – £50,270</div></div><div class="tc-bracket-rate" style="color:#00FFAA;">20%</div></div>
+          <div class="tc-bracket-row"><div class="tc-bracket-color" style="background:#E8B923;"></div><div class="tc-bracket-info"><div class="tc-bracket-name">Higher Rate</div><div class="tc-bracket-range">£50,271 – £125,140</div></div><div class="tc-bracket-rate" style="color:#E8B923;">40%</div></div>
+          <div class="tc-bracket-row"><div class="tc-bracket-color" style="background:#FF6B6B;"></div><div class="tc-bracket-info"><div class="tc-bracket-name">Additional Rate</div><div class="tc-bracket-range">Over £125,140</div></div><div class="tc-bracket-rate" style="color:#FF6B6B;">45%</div></div>
+        </div>
+        <button class="tc-btn" onclick="showToast('📄 Generating SA100 + MTD submission…','tc-toast');setTimeout(()=>showToast(\'✅ SA100 ready! Blockchain hash: 0xA4F2...\',\'tc-toast\'),2200)">📄 Generate SA100 / MTD</button>
+        <button class="tc-btn-outline" onclick="showToast('📤 Exporting PDF…','tc-toast')">📤 Export PDF Report</button>
+      </div>
+    </div>
+
+    <!-- ═══ TC PLANNER ═══ -->
+    <div class="tc-screen" id="tcs-planner">
+      <div class="tc-section-pad">
+        <div class="tc-card">
+          <div class="tc-card-title">Income Modelling</div>
+          <div class="tc-slider-wrap">
+            <div class="tc-slider-hdr"><div class="tc-slider-label">Gross Salary</div><div class="tc-slider-val">£<span id="tc-sl-salary-val">57,700</span></div></div>
+            <input type="range" id="tc-sl-salary" min="12570" max="150000" step="500" value="57700" oninput="updateTCPlanner()">
+          </div>
+          <div class="tc-slider-wrap">
+            <div class="tc-slider-hdr"><div class="tc-slider-label">Pension Contribution</div><div class="tc-slider-val">£<span id="tc-sl-pension-val">5,000</span></div></div>
+            <input type="range" id="tc-sl-pension" min="0" max="60000" step="500" value="5000" oninput="updateTCPlanner()">
+          </div>
+          <div class="tc-slider-wrap">
+            <div class="tc-slider-hdr"><div class="tc-slider-label">Capital Gains</div><div class="tc-slider-val">£<span id="tc-sl-cgt-val">7,420</span></div></div>
+            <input type="range" id="tc-sl-cgt" min="0" max="100000" step="500" value="7420" oninput="updateTCPlanner()">
+          </div>
+        </div>
+        <div class="tc-balance" style="padding:18px;">
+          <div class="tc-bal-label">Projected Tax Liability</div>
+          <div class="tc-bal-amount" id="tc-planner-tax">£11,360</div>
+          <div class="tc-bal-change" id="tc-planner-saving" style="color:var(--emerald);">Saving £3,847 vs unoptimised</div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-card-title">Smart Scenarios</div>
+          <div class="tc-scenario selected" onclick="applyTCScenario('pension',this)"><div class="tc-scenario-hdr"><div class="tc-scenario-name">💰 Max Pension</div><div class="tc-scenario-saving">Save £12,400</div></div><div class="tc-scenario-desc">Max out £60k pension. Removes higher rate exposure entirely.</div></div>
+          <div class="tc-scenario" onclick="applyTCScenario('isa',this)"><div class="tc-scenario-hdr"><div class="tc-scenario-name">📈 Max ISA</div><div class="tc-scenario-saving">Save £800</div></div><div class="tc-scenario-desc">Use full £20,000 ISA allowance before 5 April.</div></div>
+          <div class="tc-scenario" onclick="applyTCScenario('salary',this)"><div class="tc-scenario-hdr"><div class="tc-scenario-name">🔄 Salary Sacrifice</div><div class="tc-scenario-saving">Save £2,100</div></div><div class="tc-scenario-desc">Sacrifice £10,500 salary for benefits. Saves NI + income tax.</div></div>
+          <div class="tc-scenario" onclick="applyTCScenario('loss',this)"><div class="tc-scenario-hdr"><div class="tc-scenario-name">📉 CGT Loss Harvest</div><div class="tc-scenario-saving">Save £920</div></div><div class="tc-scenario-desc">Realise £9,200 of crypto losses. Stay within CGT exempt band.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TC LEARN ═══ -->
+    <div class="tc-screen" id="tcs-learn">
+      <div class="tc-section-pad">
+        <div class="tc-learn-hero">
+          <div class="tc-learn-title">🎓 UK Crypto Tax — For Dummies</div>
+          <div class="tc-learn-sub">10 key lessons · No jargon · No stress</div>
+          <div class="tc-learn-prog-bar"><div class="tc-learn-prog-fill" id="tc-learn-fill" style="width:0%;"></div></div>
+          <div class="tc-learn-xp-row"><div class="tc-learn-xp">⚡ <span id="tc-learn-xp">0</span> XP</div><div class="tc-learn-done"><span id="tc-learn-done">0</span> / 10 complete</div></div>
+        </div>
+
+        <!-- Lesson 1 -->
+        <div class="tc-lesson-card" id="tl-1" onclick="toggleTCLesson(1,event)">
+          <div class="tc-lesson-hdr">
+            <div class="tc-lesson-num" id="tlnum-1" style="background:rgba(0,255,170,.1);color:var(--emerald);">₿</div>
+            <div class="tc-lesson-meta"><div class="tc-lesson-title">1. Does HMRC know about my crypto?</div><div class="tc-lesson-diff">Beginner · 2 min</div></div>
+            <div style="font-size:11px;color:#64748B;font-family:var(--font-mono);">▼</div>
+          </div>
+          <div class="tc-lesson-body" onclick="event.stopPropagation()">
+            <div class="tc-lesson-text"><strong>Yes — very much so.</strong> Since 2020, HMRC receives data directly from UK crypto exchanges (Coinbase, Binance UK, Kraken) under data-sharing agreements. They know your name, address, and transaction history.</div>
+            <div class="tc-callout tc-callout-warn" style="margin-top:10px;"><div class="tc-callout-label">⚠️ Warning</div>Deliberate non-disclosure can attract penalties up to <strong>200% of the tax owed</strong>, plus interest.</div>
+            <div class="tc-lesson-text" style="margin-top:10px;">HMRC treats crypto as a <em>capital asset</em> — exactly like shares or property. This has been their position since 2018 (HMRC Cryptoassets Manual CRYPTO10000).</div>
+            <button class="tc-complete-btn" id="tlbtn-1" onclick="completeTCLesson(1,event)">✓ Mark as Understood</button>
+          </div>
+        </div>
+
+        <!-- Lesson 2 -->
+        <div class="tc-lesson-card" id="tl-2" onclick="toggleTCLesson(2,event)">
+          <div class="tc-lesson-hdr">
+            <div class="tc-lesson-num" id="tlnum-2" style="background:rgba(232,185,35,.1);color:#E8B923;">💰</div>
+            <div class="tc-lesson-meta"><div class="tc-lesson-title">2. Capital Gains Tax (CGT) simply explained</div><div class="tc-lesson-diff">Beginner · 3 min</div></div>
+            <div style="font-size:11px;color:#64748B;font-family:var(--font-mono);">▼</div>
+          </div>
+          <div class="tc-lesson-body" onclick="event.stopPropagation()">
+            <div class="tc-lesson-text">CGT = <strong>what you sold for</strong> minus <strong>what you paid</strong> (including fees). The first <em>£3,000</em> of gains each tax year is completely free (Annual Exempt Amount). 2025/26 CGT rates: <em>10%</em> (basic rate taxpayer) or <em>20%</em> (higher rate).</div>
+            <div class="tc-callout tc-callout-tip" style="margin-top:10px;"><div class="tc-callout-label">💡 Key Tip</div>Swapping BTC → ETH feels like "staying in crypto" but HMRC counts it as: selling BTC (CGT event) AND buying ETH (new cost basis). Thousands miss this!</div>
+            <button class="tc-complete-btn" id="tlbtn-2" onclick="completeTCLesson(2,event)">✓ Mark as Understood</button>
+          </div>
+        </div>
+
+        <!-- Lesson 3 -->
+        <div class="tc-lesson-card" id="tl-3" onclick="toggleTCLesson(3,event)">
+          <div class="tc-lesson-hdr">
+            <div class="tc-lesson-num" id="tlnum-3" style="background:rgba(139,92,246,.1);color:#8B5CF6;">🏊</div>
+            <div class="tc-lesson-meta"><div class="tc-lesson-title">3. The Section 104 Pool explained</div><div class="tc-lesson-diff">Intermediate · 3 min</div></div>
+            <div style="font-size:11px;color:#64748B;font-family:var(--font-mono);">▼</div>
+          </div>
+          <div class="tc-lesson-body" onclick="event.stopPropagation()">
+            <div class="tc-lesson-text">All your BTC purchases go into one <strong>blended pool</strong> at an average cost. When you sell, HMRC uses that blended average — you can't cherry-pick "the cheap ones". HMRC's priority: 1) Same-day rule, 2) 30-day rule, 3) Section 104 Pool.</div>
+            <button class="tc-complete-btn" id="tlbtn-3" onclick="completeTCLesson(3,event)">✓ Mark as Understood</button>
+          </div>
+        </div>
+
+        <!-- Lesson 4 -->
+        <div class="tc-lesson-card" id="tl-4" onclick="toggleTCLesson(4,event)">
+          <div class="tc-lesson-hdr">
+            <div class="tc-lesson-num" id="tlnum-4" style="background:rgba(255,107,107,.1);color:#FF6B6B;">🛏️</div>
+            <div class="tc-lesson-meta"><div class="tc-lesson-title">4. The 30-Day Bed &amp; Breakfast Rule</div><div class="tc-lesson-diff">Intermediate · 3 min</div></div>
+            <div style="font-size:11px;color:#64748B;font-family:var(--font-mono);">▼</div>
+          </div>
+          <div class="tc-lesson-body" onclick="event.stopPropagation()">
+            <div class="tc-lesson-text">If you <strong>sell crypto at a loss</strong> then <strong>buy the same coin back within 30 days</strong>, HMRC denies the loss claim — matching the sale against those new purchases instead.</div>
+            <div class="tc-callout tc-callout-warn"><div class="tc-callout-label">⚠️ The Rule</div>Want to genuinely harvest a loss? Wait <strong>31+ days</strong> before buying the same coin back.</div>
+            <button class="tc-complete-btn" id="tlbtn-4" onclick="completeTCLesson(4,event)">✓ Mark as Understood</button>
+          </div>
+        </div>
+
+        <!-- Lesson 5 -->
+        <div class="tc-lesson-card" id="tl-5" onclick="toggleTCLesson(5,event)">
+          <div class="tc-lesson-hdr">
+            <div class="tc-lesson-num" id="tlnum-5" style="background:rgba(59,130,246,.1);color:#3B82F6;">⛏️</div>
+            <div class="tc-lesson-meta"><div class="tc-lesson-title">5. Staking, Mining &amp; Income Tax</div><div class="tc-lesson-diff">Intermediate · 3 min</div></div>
+            <div style="font-size:11px;color:#64748B;font-family:var(--font-mono);">▼</div>
+          </div>
+          <div class="tc-lesson-body" onclick="event.stopPropagation()">
+            <div class="tc-lesson-text">Earning crypto (staking, mining, airdrops) is taxed <em>twice</em>: <strong>Income Tax</strong> on the GBP value when you receive it, then <strong>CGT</strong> on any gain when you later sell. Don't miss staking income in your Self Assessment — it's taxable at receipt, not at sale.</div>
+            <button class="tc-complete-btn" id="tlbtn-5" onclick="completeTCLesson(5,event)">✓ Mark as Understood</button>
+          </div>
+        </div>
+
+        <!-- Lesson 6 -->
+        <div class="tc-lesson-card" id="tl-6" onclick="toggleTCLesson(6,event)">
+          <div class="tc-lesson-hdr">
+            <div class="tc-lesson-num" id="tlnum-6" style="background:rgba(236,72,153,.1);color:#EC4899;">🖼️</div>
+            <div class="tc-lesson-meta"><div class="tc-lesson-title">6. NFTs, DeFi &amp; Edge Cases</div><div class="tc-lesson-diff">Intermediate · 3 min</div></div>
+            <div style="font-size:11px;color:#64748B;font-family:var(--font-mono);">▼</div>
+          </div>
+          <div class="tc-lesson-body" onclick="event.stopPropagation()">
+            <div class="tc-lesson-text">NFTs are unique cryptoassets — same CGT rules apply. DeFi is complex: providing liquidity is likely a CGT disposal; yield farming rewards are income tax. <em>Not a disposal:</em> moving crypto between your own wallets, or gifting to a spouse (they take your cost basis).</div>
+            <button class="tc-complete-btn" id="tlbtn-6" onclick="completeTCLesson(6,event)">✓ Mark as Understood</button>
+          </div>
+        </div>
+
+        <!-- Lesson 7 -->
+        <div class="tc-lesson-card" id="tl-7" onclick="toggleTCLesson(7,event)">
+          <div class="tc-lesson-hdr">
+            <div class="tc-lesson-num" id="tlnum-7" style="background:rgba(0,255,170,.1);color:var(--emerald);">📁</div>
+            <div class="tc-lesson-meta"><div class="tc-lesson-title">7. Record Keeping &amp; How to Report</div><div class="tc-lesson-diff">Beginner · 2 min</div></div>
+            <div style="font-size:11px;color:#64748B;font-family:var(--font-mono);">▼</div>
+          </div>
+          <div class="tc-lesson-body" onclick="event.stopPropagation()">
+            <div class="tc-lesson-text">You need a Self Assessment (SA100 + SA108) if gains exceed <em>£3,000</em> or proceeds exceed <em>£50,000</em>. Key deadlines: Tax year ends <strong>5 April</strong>. Online submission deadline: <strong>31 January</strong> following year. TaxChain automates GBP valuation, pool calculations, and generates your SA100 with blockchain proof.</div>
+            <div class="tc-callout tc-callout-tip"><div class="tc-callout-label">📅 Don't miss!</div>Late filing = £100 fine + interest. TaxChain generates your full submission in one tap.</div>
+            <button class="tc-complete-btn" id="tlbtn-7" onclick="completeTCLesson(7,event)">✓ Mark as Understood</button>
+          </div>
+        </div>
+
+        <!-- Lesson 8 -->
+        <div class="tc-lesson-card" id="tl-8" onclick="toggleTCLesson(8,event)">
+          <div class="tc-lesson-hdr">
+            <div class="tc-lesson-num" id="tlnum-8" style="background:rgba(0,255,170,.1);color:var(--emerald);">🎯</div>
+            <div class="tc-lesson-meta"><div class="tc-lesson-title">8. CGT Planning Strategies</div><div class="tc-lesson-diff">Advanced · 4 min</div></div>
+            <div style="font-size:11px;color:#64748B;font-family:var(--font-mono);">▼</div>
+          </div>
+          <div class="tc-lesson-body" onclick="event.stopPropagation()">
+            <div class="tc-lesson-text"><strong>Spousal transfers:</strong> CGT-free transfers between spouses; each gets their own £3,000 exempt amount = £6,000 combined. <em>Loss harvesting:</em> sell losing positions before 5 April to offset gains (wait 31 days to rebuy). <em>Pension contributions:</em> reduce adjusted income to shift crypto gains from 20% → 10% CGT rate.</div>
+            <button class="tc-complete-btn" id="tlbtn-8" onclick="completeTCLesson(8,event)">✓ Mark as Understood</button>
+          </div>
+        </div>
+
+        <!-- Lesson 9 -->
+        <div class="tc-lesson-card" id="tl-9" onclick="toggleTCLesson(9,event)">
+          <div class="tc-lesson-hdr">
+            <div class="tc-lesson-num" id="tlnum-9" style="background:rgba(255,107,107,.1);color:#FF6B6B;">🚨</div>
+            <div class="tc-lesson-meta"><div class="tc-lesson-title">9. The 7 Most Expensive Mistakes</div><div class="tc-lesson-diff">Must-Read · 4 min</div></div>
+            <div style="font-size:11px;color:#64748B;font-family:var(--font-mono);">▼</div>
+          </div>
+          <div class="tc-lesson-body" onclick="event.stopPropagation()">
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+              <div style="background:rgba(255,107,107,.08);border-radius:9px;padding:10px;border-left:3px solid #FF6B6B;"><div style="font-weight:700;font-size:12px;margin-bottom:3px;color:#fff;">❌ #1: "HMRC won't find out"</div><div class="tc-lesson-text" style="margin-top:0;">Exchange data has been shared since 2020. This costs people thousands.</div></div>
+              <div style="background:rgba(255,107,107,.08);border-radius:9px;padding:10px;border-left:3px solid #FF6B6B;"><div style="font-weight:700;font-size:12px;margin-bottom:3px;color:#fff;">❌ #2: Forgetting crypto-to-crypto trades</div><div class="tc-lesson-text" style="margin-top:0;">Every BTC → ETH swap is a CGT event. Most people only count GBP withdrawals.</div></div>
+              <div style="background:rgba(232,185,35,.08);border-radius:9px;padding:10px;border-left:3px solid #E8B923;"><div style="font-weight:700;font-size:12px;margin-bottom:3px;color:#fff;">⚠️ #3: Using FIFO instead of Pool method</div><div class="tc-lesson-text" style="margin-top:0;">HMRC requires Section 104 pool averaging. FIFO/LIFO are incorrect under UK law.</div></div>
+              <div style="background:rgba(232,185,35,.08);border-radius:9px;padding:10px;border-left:3px solid #E8B923;"><div style="font-weight:700;font-size:12px;margin-bottom:3px;color:#fff;">⚠️ #4: Not reporting staking income</div><div class="tc-lesson-text" style="margin-top:0;">Staking rewards are income at receipt — not when you sell.</div></div>
+              <div style="background:rgba(232,185,35,.08);border-radius:9px;padding:10px;border-left:3px solid #E8B923;"><div style="font-weight:700;font-size:12px;margin-bottom:3px;color:#fff;">⚠️ #5: Ignoring 30-day B&B rule</div><div class="tc-lesson-text" style="margin-top:0;">Selling at a loss and rebuying within 30 days destroys your loss claim.</div></div>
+              <div style="background:rgba(100,116,139,.08);border-radius:9px;padding:10px;border-left:3px solid #64748B;"><div style="font-weight:700;font-size:12px;margin-bottom:3px;color:#fff;">📋 #6: Poor record keeping</div><div class="tc-lesson-text" style="margin-top:0;">Without GBP values at transaction time, HMRC can treat the full proceeds as a gain.</div></div>
+              <div style="background:rgba(100,116,139,.08);border-radius:9px;padding:10px;border-left:3px solid #64748B;"><div style="font-weight:700;font-size:12px;margin-bottom:3px;color:#fff;">📋 #7: Missing £50k proceeds threshold</div><div class="tc-lesson-text" style="margin-top:0;">Even zero-gain filers must report if total proceeds exceeded £50k.</div></div>
+            </div>
+            <button class="tc-complete-btn" id="tlbtn-9" onclick="completeTCLesson(9,event)">✓ Mark as Understood</button>
+          </div>
+        </div>
+
+        <!-- Lesson 10 — Year-End Checklist -->
+        <div class="tc-lesson-card" id="tl-10" onclick="toggleTCLesson(10,event)">
+          <div class="tc-lesson-hdr">
+            <div class="tc-lesson-num" id="tlnum-10" style="background:rgba(236,72,153,.1);color:#EC4899;">📋</div>
+            <div class="tc-lesson-meta"><div class="tc-lesson-title">10. Year-End Tax Checklist</div><div class="tc-lesson-diff">Practical · 3 min</div></div>
+            <div style="font-size:11px;color:#64748B;font-family:var(--font-mono);">▼</div>
+          </div>
+          <div class="tc-lesson-body" onclick="event.stopPropagation()">
+            <div class="tc-callout tc-callout-warn"><div class="tc-callout-label">📅 These expire 5 April</div>Once the tax year closes, these opportunities are gone forever.</div>
+            <div style="display:flex;flex-direction:column;gap:7px;margin-top:10px;">
+              <div style="background:rgba(255,255,255,.04);border-radius:9px;padding:10px;display:flex;gap:8px;"><div style="width:20px;height:20px;border-radius:5px;background:rgba(0,255,170,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--font-mono);flex-shrink:0;color:var(--emerald);">1</div><div class="tc-lesson-text" style="margin-top:0;"><strong>Use your £3,000 CGT exempt amount</strong> — it doesn't roll over.</div></div>
+              <div style="background:rgba(255,255,255,.04);border-radius:9px;padding:10px;display:flex;gap:8px;"><div style="width:20px;height:20px;border-radius:5px;background:rgba(0,255,170,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--font-mono);flex-shrink:0;color:var(--emerald);">2</div><div class="tc-lesson-text" style="margin-top:0;"><strong>Harvest crypto losses</strong> — sell before 5 April, wait 31 days to rebuy.</div></div>
+              <div style="background:rgba(255,255,255,.04);border-radius:9px;padding:10px;display:flex;gap:8px;"><div style="width:20px;height:20px;border-radius:5px;background:rgba(139,92,246,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--font-mono);flex-shrink:0;color:#8B5CF6;">3</div><div class="tc-lesson-text" style="margin-top:0;"><strong>Top up your ISA</strong> — £20,000 limit, resets 6 April. Tax-free growth forever.</div></div>
+              <div style="background:rgba(255,255,255,.04);border-radius:9px;padding:10px;display:flex;gap:8px;"><div style="width:20px;height:20px;border-radius:5px;background:rgba(232,185,35,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--font-mono);flex-shrink:0;color:#E8B923;">4</div><div class="tc-lesson-text" style="margin-top:0;"><strong>Make pension contributions</strong> — reduces income, can drop CGT rate from 20% to 10%.</div></div>
+              <div style="background:rgba(255,255,255,.04);border-radius:9px;padding:10px;display:flex;gap:8px;"><div style="width:20px;height:20px;border-radius:5px;background:rgba(236,72,153,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--font-mono);flex-shrink:0;color:#EC4899;">5</div><div class="tc-lesson-text" style="margin-top:0;"><strong>Transfer assets to spouse</strong> — free up their £3k exempt amount, use their lower rate.</div></div>
+            </div>
+            <button class="tc-complete-btn" id="tlbtn-10" onclick="completeTCLesson(10,event)">🏆 Complete — I'm Ready to File!</button>
+          </div>
+        </div>
+
+        <!-- Completion banner -->
+        <div id="tc-completion-banner" style="display:none;background:linear-gradient(135deg,rgba(0,255,170,.1),rgba(232,185,35,.07));border:1px solid rgba(0,255,170,.25);border-radius:14px;padding:20px;text-align:center;margin-bottom:12px;">
+          <div style="font-size:2rem;margin-bottom:6px;">🏆</div>
+          <div style="font-family:var(--font-display);font-size:14px;font-weight:800;color:var(--emerald);margin-bottom:5px;">Crypto Tax Graduate!</div>
+          <div style="font-size:11px;color:#94A3B8;line-height:1.6;margin-bottom:12px;">All 10 lessons complete. You now know more about UK crypto tax than 99% of investors.</div>
+          <button class="tc-btn" onclick="switchTCScreen('planner');showToast('🎓 Let the planning begin!','tc-toast')">📅 Open Tax Planner</button>
+        </div>
+        <div style="height:14px;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TaxChain Bottom Nav -->
+  <nav class="tc-nav">
+    <button class="tc-nav-item active" id="tcnav-home" onclick="switchTCScreen('home')">
+      <div class="tc-nav-icon">🏠</div><div class="tc-nav-label">Home</div>
+    </button>
+    <button class="tc-nav-item" id="tcnav-import" onclick="switchTCScreen('import')">
+      <div class="tc-nav-icon">📥</div><div class="tc-nav-label">Import</div>
+    </button>
+    <button class="tc-nav-item" id="tcnav-reports" onclick="switchTCScreen('reports')">
+      <div class="tc-nav-icon">📊</div><div class="tc-nav-label">Reports</div>
+    </button>
+    <button class="tc-nav-item" id="tcnav-planner" onclick="switchTCScreen('planner')">
+      <div class="tc-nav-icon">📅</div><div class="tc-nav-label">Planner</div>
+    </button>
+    <button class="tc-nav-item" id="tcnav-learn" onclick="switchTCScreen('learn')">
+      <div class="tc-nav-icon" style="position:relative;">🎓<span id="tc-learn-badge" style="display:none;position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:var(--emerald);border-radius:50%;border:1px solid var(--navy);"></span></div>
+      <div class="tc-nav-label">Learn</div>
+    </button>
+  </nav>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════ MODE SWITCHING ═══════════════════════ */
+let currentMode = 'swot';
+
+function switchAppMode(mode){
+  if(currentMode === mode) return;
+  const overlay = document.getElementById('bridge-overlay');
+  overlay.classList.add('show');
+  setTimeout(()=>{
+    currentMode = mode;
+    document.getElementById('swot-app').classList.toggle('active', mode==='swot');
+    document.getElementById('taxchain-app').classList.toggle('active', mode==='taxchain');
+    document.getElementById('pill-swot').classList.toggle('active', mode==='swot');
+    document.getElementById('pill-tc').classList.toggle('active', mode==='taxchain');
+    document.querySelectorAll('.swot-nav,.tc-nav').forEach(n=>{
+      n.style.display = (mode==='swot' && n.classList.contains('swot-nav')) || (mode==='taxchain' && n.classList.contains('tc-nav')) ? 'flex' : 'none';
+    });
+    overlay.classList.remove('show');
+    if(mode==='swot') showToast('📊 SWOT Planner', 'swot-toast');
+    else showToast('⛓️ TaxChain UK — HMRC ready', 'tc-toast');
+  }, 700);
+}
+
+/* ═══════════════════════ SWOT SCREENS ═══════════════════════ */
+let currentSwotScreen = 1;
+function switchSwotScreen(n){
+  document.querySelectorAll('.swot-screen').forEach((s,i)=>s.classList.toggle('active',i+1===n));
+  document.querySelectorAll('.s-nav-item').forEach((el,i)=>el.classList.toggle('active',i+1===n));
+  document.querySelectorAll('.swot-screen.active .page-scroll').forEach(s=>s.scrollTop=0);
+  currentSwotScreen = n;
+}
+/* ═══════════════════════ TAXCHAIN SCREENS ═══════════════════════ */
+function switchTCScreen(id){
+  document.querySelectorAll('.tc-screen').forEach(s=>s.classList.toggle('active',s.id==='tcs-'+id));
+  document.querySelectorAll('.tc-nav-item').forEach(n=>n.classList.toggle('active',n.id==='tcnav-'+id));
+}
+/* ═══════════════════════ TOAST ═══════════════════════ */
+let _toastT;
+function showToast(msg, cls='swot-toast'){
+  const t=document.getElementById('toast');
+  clearTimeout(_toastT);
+  t.textContent=msg;
+  t.className='toast '+cls+' show';
+  _toastT=setTimeout(()=>t.classList.remove('show'),2600);
+}
+/* ═══════════════════════ SWOT FUNCTIONS ═══════════════════════ */
+function toggleSwotCollapse(){
+  const body=document.getElementById('swot-body');
+  const tog=document.getElementById('swot-tog');
+  const hidden=body.style.display==='none';
+  body.style.display=hidden?'':'none';
+  tog.textContent=hidden?'▲ Collapse':'▼ Expand';
+}
+function removeSwotItem(btn){
+  const el=btn.closest('.eq-item');
+  el.style.transition='all .2s';el.style.opacity='0';el.style.transform='translateX(10px)';
+  setTimeout(()=>el.remove(),210);
+}
+function addSwotItem(q){
+  const labels={s:'Strength',w:'Weakness',o:'Opportunity',t:'Threat'};
+  const txt=prompt('Add a '+labels[q]+':');
+  if(!txt||!txt.trim()) return;
+  const container=document.getElementById('eq-'+q);
+  const addBtn=container.querySelector('.eq-add');
+  const dotColors={s:'var(--tl-dp)',w:'var(--am-dp)',o:'var(--vl-dp)',t:'var(--em-dp)'};
+  const item=document.createElement('div');
+  item.className='eq-item';
+  item.innerHTML=`<div class="eq-dot" style="background:${dotColors[q]}"></div><span class="eq-txt">${txt.trim()}</span><span class="eq-del" onclick="removeSwotItem(this)">×</span>`;
+  item.style.opacity='0';item.style.transform='translateY(6px)';
+  container.insertBefore(item,addBtn);
+  requestAnimationFrame(()=>{item.style.transition='all .25s ease';item.style.opacity='1';item.style.transform='none';});
+  showToast('✅ '+labels[q]+' added!','swot-toast');
+  refreshAIInsights(false);
+}
+function saveSwot(){
+  showToast('💾 SWOT saved! +20 🪙 earned','swot-toast');
+  const xpEl=document.getElementById('hm-xp');
+  if(xpEl) xpEl.textContent=parseInt(xpEl.textContent)+20;
+  document.getElementById('mtb-xp').textContent='🪙 '+(parseInt(document.getElementById('mtb-xp').textContent.replace('🪙 ',''))+20);
+  setTimeout(()=>switchSwotScreen(1),1200);
+}
+function toggleCheck(el){
+  const c=el.classList.toggle('chk');
+  el.textContent=c?'✓':'';
+  el.closest('.task-card').querySelector('.tc-ttl').classList.toggle('done',c);
+  if(c) showToast('✅ Done! +20 🪙 $SWOT','swot-toast');
+}
+function deleteCard(btn){
+  const card=btn.closest('.task-card');
+  card.style.transition='all .22s';card.style.opacity='0';card.style.transform='scale(.9)';
+  setTimeout(()=>card.remove(),230);
+  showToast('🗑️ Task removed','swot-toast');
+}
+function addTaskCard(listId,cntId,qKey){
+  const txt=prompt('New task:');
+  if(!txt||!txt.trim()) return;
+  const tagMap={do:'🔴 High',sc:'📅 Med',dg:'🤝 Delegate',dp:'⬇ Low'};
+  const dateMap={do:'Due soon',sc:'Next week',dg:'📤 Share',dp:'Someday'};
+  const card=document.createElement('div');
+  card.className='task-card';card.draggable=true;
+  card.innerHTML=`<div class="tc-top"><div class="tc-cb" onclick="toggleCheck(this)"></div><div class="tc-body"><div class="tc-ttl">${txt.trim()}</div><div class="tc-meta"><span class="tc-tag md">${tagMap[qKey]||'🟡 Med'}</span><span class="tc-date">${dateMap[qKey]||'Soon'}</span></div></div><span class="tc-del" onclick="deleteCard(this)">🗑️</span></div>`;
+  card.style.opacity='0';card.style.transform='translateY(8px)';
+  document.getElementById(listId).appendChild(card);
+  requestAnimationFrame(()=>{card.style.transition='all .25s ease';card.style.opacity='1';card.style.transform='none';});
+  const cnt=document.getElementById(cntId);
+  if(cnt) cnt.textContent=parseInt(cnt.textContent)+1;
+  showToast('📌 Task added!','swot-toast');
+}
+function filterTasks(v){
+  v=v.trim().toLowerCase();
+  document.querySelectorAll('.task-card').forEach(c=>{
+    const m=!v||c.querySelector('.tc-ttl').textContent.toLowerCase().includes(v);
+    c.style.opacity=m?'1':'0.2';
+  });
+}
+function toggleAcc(trig){
+  const body=trig.nextElementSibling;const ch=trig.querySelector('.acc-ch');
+  const isOpen=body.classList.contains('open');
+  document.querySelectorAll('.acc-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.acc-ch').forEach(c=>c.classList.remove('open'));
+  if(!isOpen){body.classList.add('open');if(ch)ch.classList.add('open');}
+}
+
+/* ═══ AI Insights ═══ */
+let _aiInsDebounce=null;
+let _aiInsBusy=false;
+let _aiInsHash='';
+
+function _swotHash(){
+  const quads=['s','w','o','t'];
+  return quads.map(q=>{
+    const cont=document.getElementById('eq-'+q);
+    if(!cont) return '';
+    return Array.from(cont.querySelectorAll('.eq-txt')).map(e=>e.textContent).join('|');
+  }).join('||');
+}
+
+function refreshAIInsights(force){
+  const hash=_swotHash();
+  if(!force && hash===_aiInsHash) return;
+  clearTimeout(_aiInsDebounce);
+  _aiInsDebounce=setTimeout(()=>_callInsights(hash), force?0:1400);
+}
+
+function _callInsights(hash){
+  if(_aiInsBusy) return;
+  _aiInsBusy=true;
+  const body=document.getElementById('ai-ins-body');
+  const chips=document.getElementById('ai-ins-chips');
+  if(body) body.innerHTML='<span style="color:var(--label-muted);font-size:11px;font-style:italic;">Analysing your SWOT grid…</span>';
+  if(chips) chips.innerHTML='';
+
+  const getItems=q=>{
+    const cont=document.getElementById('eq-'+q);
+    return cont?Array.from(cont.querySelectorAll('.eq-txt')).map(e=>e.textContent):[];
+  };
+  const swotS=getItems('s').join(', ')||'none';
+  const swotW=getItems('w').join(', ')||'none';
+  const swotO=getItems('o').join(', ')||'none';
+  const swotT=getItems('t').join(', ')||'none';
+
+  const total=[swotS,swotW,swotO,swotT].join('').replace(/none/g,'').trim();
+  if(!total){
+    if(body) body.innerHTML='<span style="color:var(--label-muted);font-size:11px;">Add items to your SWOT grid to get personalised insights.</span>';
+    _aiInsBusy=false;return;
+  }
+
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:300,
+      messages:[{role:'user',content:`You are a crypto portfolio strategist. Analyse this SWOT and give 2-3 sentences of actionable insight. Suggest 3 action chips (2-4 words each). Format as JSON only: {"insight":"...","chips":[{"label":"...","cat":"tl"},{"label":"...","cat":"am"},{"label":"...","cat":"vl"}]}\nS:${swotS}\nW:${swotW}\nO:${swotO}\nT:${swotT}`}]
+    })
+  }).then(r=>r.json()).then(data=>{
+    const raw=(data.content||[]).map(b=>b.text||'').join('');
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(clean);
+    if(body){body.style.opacity='0';setTimeout(()=>{body.textContent=parsed.insight||'';body.style.transition='opacity .3s';body.style.opacity='1';},150);}
+    if(chips&&parsed.chips){
+      const catMap={tl:'chip-tl',am:'chip-am',vl:'chip-vl'};
+      setTimeout(()=>{chips.innerHTML=parsed.chips.map(c=>`<div class="ai-chip ${catMap[c.cat]||'chip-tl'}" onclick="showToast('⚡ ${c.label}','swot-toast')">${c.label}</div>`).join('');},250);
+    }
+    _aiInsHash=hash;
+  }).catch(()=>{
+    if(body) body.textContent='Leverage your strengths and address weaknesses before chasing opportunities.';
+    _aiInsHash=hash;
+  }).finally(()=>{_aiInsBusy=false;});
+}
+
+/* Scale of Preference */
+let prefItems=[
+  {id:1,name:'Activate Portfolio Stoploss',score:10,cat:'Strength',icon:'🛡️',tags:['SWOT:S','Critical']},
+  {id:2,name:'Research DeFi Airdrops',score:9,cat:'Opportunity',icon:'🚀',tags:['SWOT:O','Yield']},
+  {id:3,name:'Diversify Portfolio',score:8,cat:'Goal',icon:'🎯',tags:['Goal','Risk Mgmt']},
+  {id:4,name:'Reduce Leverage Exposure',score:7,cat:'Weakness',icon:'⚠️',tags:['SWOT:W']},
+  {id:5,name:'Study L2 Protocols',score:6,cat:'Opportunity',icon:'📚',tags:['Research']},
+  {id:6,name:'Connect Phantom Wallet',score:4,cat:'Goal',icon:'👻',tags:['Setup']}
+];
+
+function getScoreColor(s){return s>=9?'#00c8ac':s>=7?'#22d3a8':s>=5?'#d4af37':s>=3?'#f97316':'#c05a08';}
+
+function renderPrefChart(){
+  const sorted=[...prefItems].sort((a,b)=>b.score-a.score);
+  const body=document.getElementById('chartBody');if(!body)return;
+  body.innerHTML=sorted.map(item=>{
+    const pct=(item.score/10)*100;const c=getScoreColor(item.score);
+    const nm=item.name.length>14?item.name.slice(0,13)+'…':item.name;
+    return`<div class="bar-row"><span class="bar-em">${item.icon}</span><span class="bar-lb">${nm}</span><div class="bar-tr"><div class="bar-f" style="width:${pct}%;background:linear-gradient(90deg,${c},${c}bb);"><span class="bar-s">${item.score}</span></div></div><span class="bar-n" style="color:${c};">${item.score}</span></div>`;
+  }).join('');
+}
+
+function renderPrefCards(){
+  const sorted=[...prefItems].sort((a,b)=>b.score-a.score);
+  const list=document.getElementById('cardsList');if(!list)return;
+  const il=document.getElementById('itemCountLabel');if(il)il.textContent=sorted.length+' items';
+  list.innerHTML=sorted.map((item,idx)=>{
+    const rank=idx+1;const c=getScoreColor(item.score);const pct=(item.score/10)*100;
+    const tks=item.tags.map(t=>`<span class="pol-tg">${t}</span>`).join('');
+    return`<div class="pol-card" id="pcard-${item.id}">
+      <div class="pol-strip" style="background:linear-gradient(90deg,${c},${c}88);"></div>
+      <div class="pol-body">
+        <div class="pol-hr">
+          <div class="pol-ico" style="background:rgba(0,0,0,.04);">${item.icon}</div>
+          <div class="pol-info"><div class="pol-nm">${item.name}</div><div class="pol-cat">${item.cat} · Rank #${rank}</div></div>
+          <div style="display:flex;align-items:baseline;gap:4px;"><div class="pol-sn" style="color:${c};">${item.score}</div><span style="font-family:var(--font-mono);font-size:11px;color:var(--label-muted);">/10</span></div>
+        </div>
+        <div class="pol-slw">
+          <div class="pol-slt"></div>
+          <div class="pol-slf" id="pslf-${item.id}" style="width:${pct}%;background:linear-gradient(90deg,${c},${c}cc);"></div>
+          <input type="range" class="pol-slr" id="pslr-${item.id}" min="1" max="10" step="1" value="${item.score}" style="color:${c};" oninput="updatePrefScore(${item.id},this.value)">
+        </div>
+      </div>
+      <div class="pol-foot">${tks}<div class="pol-del" onclick="deletePrefItem(${item.id})">🗑️</div></div>
+    </div>`;
+  }).join('');
+}
+
+function updatePrefScore(id,val){
+  const item=prefItems.find(i=>i.id===id);if(!item)return;
+  item.score=parseInt(val);const c=getScoreColor(item.score);const pct=(item.score/10)*100;
+  const f=document.getElementById('pslf-'+id);if(f){f.style.width=pct+'%';f.style.background=`linear-gradient(90deg,${c},${c}cc)`;}
+  const sl=document.getElementById('pslr-'+id);if(sl)sl.style.color=c;
+}
+
+function deletePrefItem(id){
+  const idx=prefItems.findIndex(i=>i.id===id);if(idx===-1)return;
+  const card=document.getElementById('pcard-'+id);
+  if(card){card.style.transition='all .22s';card.style.opacity='0';card.style.transform='scale(.9)';}
+  setTimeout(()=>{prefItems.splice(idx,1);renderPrefChart();renderPrefCards();showToast('🗑️ Item removed','swot-toast');},230);
+}
+
+function runAIPrioritize(){
+  showToast('⚡ AI Prioritising…','swot-toast');
+  setTimeout(()=>{
+    prefItems.forEach(item=>{
+      if(item.cat==='Strength')item.score=Math.min(10,item.score+1);
+      else if(item.cat==='Opportunity')item.score=Math.min(10,item.score+Math.round(Math.random()*2));
+    });
+    renderPrefChart();renderPrefCards();
+    showToast('⚡ AI prioritisation complete!','swot-toast');
+  },1800);
+}
+
+/* ═══ TaxChain Functions ═══ */
+const TAX = {personalAllowance:12570,basicRateLimit:50270,basicRate:.20,higherRate:.40,niLower:12570,niUpper:50270,niPrimary:.08,niSecondary:.02,cgtExempt:3000,cgtBasic:.10,cgtHigher:.20};
+
+function updateTCPlanner(){
+  const salary=parseInt(document.getElementById('tc-sl-salary').value)||57700;
+  const pension=parseInt(document.getElementById('tc-sl-pension').value)||0;
+  const cgt=parseInt(document.getElementById('tc-sl-cgt').value)||0;
+  document.getElementById('tc-sl-salary-val').textContent=salary.toLocaleString();
+  document.getElementById('tc-sl-pension-val').textContent=pension.toLocaleString();
+  document.getElementById('tc-sl-cgt-val').textContent=cgt.toLocaleString();
+
+  const adj=Math.max(0,salary-pension);
+  const taxable=Math.max(0,adj-TAX.personalAllowance);
+  let incomeTax=0;
+  const basicBand=TAX.basicRateLimit-TAX.personalAllowance;
+  if(taxable<=basicBand) incomeTax=taxable*TAX.basicRate;
+  else{incomeTax=basicBand*TAX.basicRate;incomeTax+=(taxable-basicBand)*TAX.higherRate;}
+  let ni=0;
+  if(adj>TAX.niLower){
+    ni=(Math.min(adj,TAX.niUpper)-TAX.niLower)*TAX.niPrimary;
+    if(adj>TAX.niUpper)ni+=(adj-TAX.niUpper)*TAX.niSecondary;
+  }
+  const cgtTaxable=Math.max(0,cgt-TAX.cgtExempt);
+  const isHigher=adj>TAX.basicRateLimit;
+  const cgtTax=cgtTaxable*(isHigher?TAX.cgtHigher:TAX.cgtBasic);
+  const total=Math.round(incomeTax+ni+cgtTax);
+  const baseline=Math.round((salary-TAX.personalAllowance)*0.28);
+  const saving=Math.max(0,baseline-total);
+  document.getElementById('tc-planner-tax').textContent='£'+total.toLocaleString();
+  const savEl=document.getElementById('tc-planner-saving');
+  if(saving>0){savEl.textContent='Saving £'+saving.toLocaleString()+' vs unoptimised ✦';savEl.style.color='var(--emerald)';}
+  else{savEl.textContent='Adjust contributions to optimise';savEl.style.color='#64748B';}
+}
+
+function applyTCScenario(type, el){
+  document.querySelectorAll('.tc-scenario').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  const s={pension:{salary:57700,pension:57700,cgt:7420},isa:{salary:57700,pension:5000,cgt:7420},salary:{salary:47200,pension:5000,cgt:7420},loss:{salary:57700,pension:5000,cgt:0}}[type];
+  if(!s) return;
+  document.getElementById('tc-sl-salary').value=s.salary;
+  document.getElementById('tc-sl-pension').value=s.pension;
+  document.getElementById('tc-sl-cgt').value=s.cgt;
+  updateTCPlanner();
+  showToast('📊 Scenario applied!','tc-toast');
+}
+
+/* TaxChain Learn */
+let tcLearnDone=new Set();
+function toggleTCLesson(id,event){
+  if(event)event.stopPropagation();
+  const card=document.getElementById('tl-'+id);if(!card)return;
+  const isOpen=card.classList.contains('open');
+  document.querySelectorAll('.tc-lesson-card').forEach(c=>c.classList.remove('open'));
+  if(!isOpen)card.classList.add('open');
+}
+function completeTCLesson(id,event){
+  if(event)event.stopPropagation();
+  if(tcLearnDone.has(id))return;
+  tcLearnDone.add(id);
+  const btn=document.getElementById('tlbtn-'+id);
+  if(btn){btn.classList.add('done');btn.textContent='✅ Lesson Complete!';}
+  const lnum=document.getElementById('tlnum-'+id);
+  if(lnum){lnum.textContent='✓';lnum.classList.add('done');lnum.style.background='linear-gradient(135deg,var(--emerald),#00C882)';lnum.style.color='#05080F';}
+  const card=document.getElementById('tl-'+id);
+  if(card)card.classList.add('completed');
+  updateTCLearnProgress();
+  showToast('🎓 Lesson '+id+' complete!','tc-toast');
+  if(tcLearnDone.size===10){
+    setTimeout(()=>{
+      showToast('🏆 ALL 10 LESSONS COMPLETE!','tc-toast');
+      const banner=document.getElementById('tc-completion-banner');
+      if(banner)banner.style.display='block';
+    },800);
+  }
+}
+function updateTCLearnProgress(){
+  const done=tcLearnDone.size;
+  const fill=document.getElementById('tc-learn-fill');if(fill)fill.style.width=(done/10*100)+'%';
+  const doneEl=document.getElementById('tc-learn-done');if(doneEl)doneEl.textContent=done;
+  const xpEl=document.getElementById('tc-learn-xp');if(xpEl)xpEl.textContent=(done*150).toLocaleString();
+  const badge=document.getElementById('tc-learn-badge');if(badge)badge.style.display=done>0?'block':'none';
+}
+
+/* ═══ INIT ═══ */
+(function init(){
+  // init nav visibility
+  document.querySelectorAll('.tc-nav').forEach(n=>n.style.display='none');
+  document.querySelectorAll('.swot-nav').forEach(n=>n.style.display='flex');
+  renderPrefChart();
+  renderPrefCards();
+  updateTCPlanner();
+  setTimeout(refreshAIInsights,1500);
+})();
+</script>
+</body>
+</html>
